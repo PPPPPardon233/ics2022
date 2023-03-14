@@ -36,10 +36,20 @@ static struct rule {
   /* TODO: Add more rules.
    * Pay attention to the precedence level of different rules.
    */
-
-  {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
-  {"==", TK_EQ},        // equal
+{"0x[0-9a-f]+",sixteen},
+  {" +", TK_NOTYPE},    
+  {"\\+", '+'},         
+  {"==", TK_EQ},        
+  {"\\-", '-'},         
+  {"\\*",'*'},          
+  {"/",'/'},            
+  {"[0-9]+",NUMBER},      
+  {"\\(",'('},          
+  {"\\)",')'},          
+  {"\\$\\p\\c",PC},
+  {"\\$[a-z]+",reg},
+  {"&&",and},
+  {"!=",neq},
 };
 
 #define NR_REGEX ARRLEN(rules)
