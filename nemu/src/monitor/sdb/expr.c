@@ -106,7 +106,12 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
-          default: TODO();
+          case 256: break;
+          default: 
+            tokens[nr_token].type=rules[i].token_type;
+            strncpy(tokens[nr_token].str,substr_start,substr_len);
+            nr_token++;
+            break;
         }
 
         break;
@@ -130,7 +135,18 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
-
+  for(int i = 0;i < nr_token;i++)
+  {
+    if(tokens[i].type=='-'&&(i==0||(tokens[i-1].type!=NUMBER&&tokens[i-1].type!=')')))
+    {
+      tokens[i].type=negative;
+      tokens[i].str[0]='-';
+    }
+    if(tokens[i].type=='*'&& (i == 0 || (tokens[i - 1].type != NUMBER &&tokens[i-1].type!=')')) )
+    {
+      tokens[i].type=deref;
+    }
+  }
+  //evaluate
   return 0;
 }
