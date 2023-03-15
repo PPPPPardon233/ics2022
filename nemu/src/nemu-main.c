@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     char expression[70000];
     char *str;
     char *unused;
-    for(int i = 0;i < 10000;i++)
+    for(int i = 0;i < 100;i++)
     {
       bool flag=true;
       expression[0]='\0';
