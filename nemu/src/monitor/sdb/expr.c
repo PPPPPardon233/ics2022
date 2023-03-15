@@ -19,6 +19,7 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include "memory/paddr.h"
 
 enum {
   TK_NOTYPE = 256, TK_EQ=255, NUMBER=254,negative=253,
@@ -29,7 +30,7 @@ enum {
 };
 
 static struct rule {
-  const char *regex;
+  char *regex;
   int token_type;
 } rules[] = {
 
