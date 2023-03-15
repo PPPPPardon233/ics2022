@@ -30,27 +30,27 @@ static char *code_format =
 "  printf(\"%%u\", result); "
 "  return 0; "
 "}";
+uint32_t rand_expr[10]={0,0,0,0,1,1,1,2,2,2};
+uint32_t rand_op;
+char expr_[100];
 char op_[2];
-int expr;
-int op;
-char temp[100];
+
+#define MAX 1000
 
 static void gen_rand_expr() {
-  expr = rand()%3;
-  op =rand()%4;
+  rand_op =rand()%4;
   
-  switch(op){
+  switch(rand_op){
     case 0:op_[0]='+';op_[1]='\0';break;
     case 1:op_[0]='-';op_[1]='\0';break;
     case 2:op_[0]='*';op_[1]='\0';break;
     default:op_[0]='/';op_[1]='\0';break;
   }
 
-  switch(expr){
+  switch(rand_expr[rand()%10]){
     case 0:{
-      temp[0]='0'+rand()%10;
-      temp[1]='\0';
-      strcat(buf,temp);
+      sprintf(expr_,"%d",rand()%MAX);
+      strcat(buf,expr_);
       break;
     }
     case 1:{
@@ -59,12 +59,12 @@ static void gen_rand_expr() {
       strcat(buf,")");
       break;
     }
-    case 2:{
+    default:{
       gen_rand_expr();
       strcat(buf,op_);
       gen_rand_expr();
       break;
-    }    
+    }
   }
 }
 
