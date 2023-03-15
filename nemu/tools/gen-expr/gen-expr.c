@@ -30,9 +30,42 @@ static char *code_format =
 "  printf(\"%%u\", result); "
 "  return 0; "
 "}";
+char op_[2];
+int expr;
+int op;
+char temp[100];
 
 static void gen_rand_expr() {
-  buf[0] = '\0';
+  expr = rand()%3;
+  op =rand()%4;
+  
+  switch(op){
+    case 0:op_[0]='+';op_[1]='\0';break;
+    case 1:op_[0]='-';op_[1]='\0';break;
+    case 2:op_[0]='*';op_[1]='\0';break;
+    default:op_[0]='/';op_[1]='\0';break;
+  }
+
+  switch(expr){
+    case 0:{
+      temp[0]='0'+rand()%10;
+      temp[1]='\0';
+      strcat(buf,temp);
+      break;
+    }
+    case 1:{
+      strcat(buf,"(");
+      gen_rand_expr();
+      strcat(buf,")");
+      break;
+    }
+    case 2:{
+      gen_rand_expr();
+      strcat(buf,op_);
+      gen_rand_expr();
+      break;
+    }    
+  }
 }
 
 int main(int argc, char *argv[]) {
@@ -44,6 +77,7 @@ int main(int argc, char *argv[]) {
   }
   int i;
   for (i = 0; i < loop; i ++) {
+    strcpy(buf," ");
     gen_rand_expr();
 
     sprintf(code_buf, code_format, buf);
