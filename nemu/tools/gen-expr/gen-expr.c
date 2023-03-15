@@ -51,7 +51,6 @@ static void gen_rand_expr() {
     case 0:{
       sprintf(expr_,"%d",rand()%MAX);
       strcat(buf,expr_);
-      //strcat(buf,"U");
       break;
     }
     case 1:{

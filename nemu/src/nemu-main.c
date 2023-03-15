@@ -40,19 +40,21 @@ int main(int argc, char *argv[]) {
     char expression[70000];
     char *str;
     char *unused;
-    for(int i = 0;i < 100;i++)
-    {
+    unsigned answer=0;
+    unsigned ans;
+    for(int i = 0;i < 100;i++){
       bool flag=true;
       expression[0]='\0';
       unused=fgets(expression,70000,fp);
-      unsigned answer=0,ans;
+      
       str = strtok(expression," ");
       sscanf(expression,"%u",&answer);
       str=expression+strlen(expression)+1;
       ans=expr(str,&flag);
       if(answer!=ans)
-        printf("%d Wrong\n",i);
-      else printf("correct %d\n",i);
+        printf("[%d] is wrong\n",i);
+      else 
+        printf("[%d] is correct\n",i);
     }
   #endif
 #endif
