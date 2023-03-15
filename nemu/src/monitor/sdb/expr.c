@@ -1,11 +1,24 @@
+/***************************************************************************************
+* Copyright (c) 2014-2022 Zihao Yu, Nanjing University
+*
+* NEMU is licensed under Mulan PSL v2.
+* You can use this software according to the terms and conditions of the Mulan PSL v2.
+* You may obtain a copy of Mulan PSL v2 at:
+*          http://license.coscl.org.cn/MulanPSL2
+*
+* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+* EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+* MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+*
+* See the Mulan PSL v2 for more details.
+***************************************************************************************/
+
 #include <isa.h>
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
-
-#include "memory/paddr.h"
 
 enum {
   TK_NOTYPE = 256, TK_EQ=255, NUMBER=254,negative=253,
@@ -16,31 +29,26 @@ enum {
 };
 
 static struct rule {
-  char *regex;
+  const char *regex;
   int token_type;
 } rules[] = {
 
   /* TODO: Add more rules.
    * Pay attention to the precedence level of different rules.
    */
-  //被用于正则表达式编译，注意转义符号。
-  {"0x[0-9a-f]+",sixteen},//十六进制数，要先判断
-  {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
-  {"==", TK_EQ},        // equal
-  {"\\-", '-'},           //sub
-  {"\\*",'*'},          //multiply
-  {"/",'/'},            //divide
-  {"[0-9]+",NUMBER},      //number
-  {"\\(",'('},          //左括号
-  {"\\)",')'},          //右括号
-// {"\\-[0-9]+",negative},
+  {" +", TK_NOTYPE},    
+  {"\\+", '+'},         
+  {"==", TK_EQ},        
+  {"\\-", '-'},         
+  {"\\*",'*'},          
+  {"/",'/'},            
+  {"[0-9]+",NUMBER},      
+  {"\\(",'('},          
+  {"\\)",')'},          
   {"\\$\\p\\c",PC},
   {"\\$[a-z]+",reg},
   {"&&",and},
   {"!=",neq},
-  
-  
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -48,7 +56,6 @@ static struct rule {
 static regex_t re[NR_REGEX] = {};
 
 unsigned int calculate();
-
 /* Rules are used for many times.
  * Therefore we compile them only once before any usage.
  */
@@ -65,40 +72,31 @@ void init_regex() {
     }
   }
 }
-//regcomp(regex_t *compiled,const char* pattern.int cflags) 
-//编译正则表达式。et为regcomp返回值，函数执行成功则返回0。 
-//这一部分编译完所有rules中的模式，存储在re[]中
 
 typedef struct token {
   int type;
   char str[32];
 } Token;
 
-static Token tokens[500] __attribute__((used)) = {};
+static Token tokens[32] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
-//make_token 用于识别待求值表达式的token
 static bool make_token(char *e) {
   int position = 0;
   int i;
   regmatch_t pmatch;
 
   nr_token = 0;
-  memset(tokens,0,sizeof(tokens));
 
-  while (e[position] != '\0' && e[position]!='\n') 
-  {
+  while (e[position] != '\0' && e[position]!='\n') {
     /* Try all rules one by one. */
-    for (i = 0; i < NR_REGEX; i ++) 
-    {
-      if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) 
-      {
-        //判断条件，成功匹配,且只返回第一个匹配到的token
-        char *substr_start = e + position; //匹配的字符串的起始位置
-        int substr_len = pmatch.rm_eo;    //匹配的字符串的终止位置
+    for (i = 0; i < NR_REGEX; i ++) {
+      if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
+        char *substr_start = e + position;
+        int substr_len = pmatch.rm_eo;
 
-        //Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-        //   i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+            i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
@@ -106,8 +104,8 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-        switch (rules[i].token_type) 
-        {
+
+        switch (rules[i].token_type) {
           case 256: break;
           default: 
             tokens[nr_token].type=rules[i].token_type;
@@ -115,6 +113,7 @@ static bool make_token(char *e) {
             nr_token++;
             break;
         }
+
         break;
       }
     }
@@ -130,6 +129,7 @@ static bool make_token(char *e) {
 
 
 word_t expr(char *e, bool *success) {
+  unsigned int ans=0;
   if (!make_token(e)) {
     *success = false;
     return 0;
@@ -148,13 +148,10 @@ word_t expr(char *e, bool *success) {
       tokens[i].type=deref;
     }
   }
-
-  unsigned int ans=calculate(0,nr_token);
-  //printf("%u\n",ans);
-  
+  ans=calculate(0,nr_token);
+  //evaluate
   return ans;
 }
-//得到tokens后计算求值,并输出
 
 unsigned int calculate(int p,int q)
 {
@@ -532,27 +529,3 @@ unsigned int calculate(int p,int q)
   }//只有加减法的运算且无括号
   return temp;
 }
-
-
-/*
-u_int32_t eval(int p,int q)
-{
-  u_int32_t temp=0,op,val1,val2;
-  if(p > q)
-  {
-    printf("wrong!\n");
-    return 0;
-  }
-  else if(p==q)
-  {
-    sscanf(tokens[p].str,"%u",&temp);
-    return temp;
-  }
-  else if(check_parentheses(p,q)==true)
-  {
-    return eval(p+1,q-1);
-  }
-  else{
-  }
-}
-*/
