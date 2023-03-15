@@ -31,7 +31,6 @@ int main(int argc, char *argv[]) {
 #ifdef CONFIG_TARGET_AM
   am_init_monitor();
 #else
-  init_monitor(argc, argv);
   /************************************************************************************
    * preserved to test if calculator works
   *************************************************************************************/
@@ -55,6 +54,7 @@ int main(int argc, char *argv[]) {
       else printf("correct %d\n",i);
     }
   #endif
+  init_monitor(argc, argv);
 #endif
 
   /* Start engine. */
