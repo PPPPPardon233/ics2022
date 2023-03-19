@@ -23,23 +23,21 @@ static struct rule {
   /* TODO: Add more rules.
    * Pay attention to the precedence level of different rules.
    */
-  //被用于正则表达式编译，注意转义符号。
-  {"0x[0-9a-f]+",sixteen},//十六进制数，要先判断
-  {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
-  {"==", TK_EQ},        // equal
-  {"\\-", '-'},           //sub
-  {"\\*",'*'},          //multiply
-  {"/",'/'},            //divide
-  {"[0-9]+",NUMBER},      //number
-  {"\\(",'('},          //左括号
-  {"\\)",')'},          //右括号
-// {"\\-[0-9]+",negative},
+
+  {"0x[0-9a-f]+",sixteen},
+  {" +", TK_NOTYPE},    //spaces
+  {"\\+", '+'},         //plus
+  {"==", TK_EQ},        //equal
+  {"\\-", '-'},         //sub
+  {"\\*",'*'},          //mul
+  {"/",'/'},            //div
+  {"[0-9]+",NUMBER},    
+  {"\\(",'('},          
+  {"\\)",')'},          
   {"\\$\\p\\c",PC},
   {"\\$[a-z]+",reg},
   {"&&",and},
   {"!=",neq},
-  
   
 };
 

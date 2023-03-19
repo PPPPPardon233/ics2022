@@ -13,9 +13,11 @@
 * See the Mulan PSL v2 for more details.
 ***************************************************************************************/
 
-#include "sdb.h"
+#include <isa.h>
 
 #define NR_WP 32
+
+word_t expr(char *e, bool *success);
 
 typedef struct watchpoint {
   int NO;
@@ -51,24 +53,32 @@ WP* search_(WP *wp){
   }
   return temp;
 }
-WP* new_wp(){
+WP* new_wp(char *expr){
   if(head==NULL){
     head=free_;
     free_=free_->next;
     head->next=NULL;
+    strcpy(head->exp,expr);
     curr=head;
   }
   else{
-    if(free_==NULL) assert(0);
+    if(free_==NULL) 
+      return NULL;
     else{
       curr->next=free_;
-      curr=free_;
+      curr=curr->next;
+      strcpy(curr->exp,expr);
       free_=free_->next;
     }
   }
   return curr;
 }
-void free_wp(WP *wp){
+void free_wp(int des){
+  WP *wp=head;
+  while(wp!=NULL){
+    if(wp->NO==des) break;
+    else wp=wp->next;
+  }
   if(wp==head){
     head=head->next;
     wp->next=free_;
@@ -105,5 +115,12 @@ void check_wp(){
       nemu_state.state = NEMU_STOP;
     }
     itr=itr->next;
+  }
+}
+void print_wp(){
+  WP *itr = head;
+  while(itr != NULL){
+    printf("%02d\t%10s\t%-10u\n",itr->NO,itr->exp,itr->last);
+    itr = itr->next;
   }
 }

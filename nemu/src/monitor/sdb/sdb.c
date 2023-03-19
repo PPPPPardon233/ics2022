@@ -17,12 +17,19 @@
 #include <cpu/cpu.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "sdb.h"
+#include <memory/vaddr.h>
+#include "watchpoint.h"
+
+#define NR_CMD ARRLEN(cmd_table)
 
 static int is_batch_mode = false;
 
 void init_regex();
 void init_wp_pool();
+void print_wp();
+WP* new_wp(char *expr);
+word_t vaddr_read(vaddr_t addr, int len);
+word_t expr(char *e, bool *success);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -38,21 +45,84 @@ static char* rl_gets() {
   if (line_read && *line_read) {
     add_history(line_read);
   }
-
   return line_read;
 }
+
+static int cmd_help(char *args);
 
 static int cmd_c(char *args) {
   cpu_exec(-1);
   return 0;
 }
 
-
 static int cmd_q(char *args) {
   return -1;
 }
 
-static int cmd_help(char *args);
+static int cmd_si(char *args){
+  if(args != NULL) cpu_exec(atoi(args));
+  else cpu_exec(1);
+  return 0;
+}
+
+static int cmd_info(char *args){
+  if(args == NULL) 
+    return 0;
+  if(strcmp(args,"r") == 0) 
+    isa_reg_display();
+  else if(strcmp(args,"w") == 0) 
+    print_wp();
+  else 
+    printf("Invalid command!\n");
+  return 0;
+}
+
+static int cmd_x(char *args){
+  char *cnt_str = strtok(NULL, " ");
+  if(cnt_str != NULL){
+    int cnt = atoi(cnt_str);
+    char *addr_str = strtok(NULL, " ");
+    if(addr_str != NULL){
+      if(strlen(addr_str)>=2 && addr_str[0] == '0' && addr_str[1] == 'x'){
+        int addr = (int)strtol(addr_str+2,NULL,16);
+        printf("%-14s%-28s%-s\n","Address","Hexadecimal","Decimal");
+        for(int i = 0; i < cnt; ++i){
+          printf("0x%-12x0x%02x  0x%02x  0x%02x  0x%02x",(addr),vaddr_read(addr,1),vaddr_read(addr+1,1),vaddr_read(addr+2,1),vaddr_read(addr+3,1));
+          printf("\t  %04d  %04d  %04d  %04d\n",vaddr_read(addr,1),vaddr_read(addr+1,1),vaddr_read(addr+2,1),vaddr_read(addr+3,1));
+          addr += 4;
+        }
+      }
+      else
+        printf("the result of the given expression is NOT hexadecimal!");
+    }
+  }
+  return 0;
+}
+
+static int cmd_p(char *args){
+  if(args == NULL) return 0;
+  bool success;
+  int res = expr(args,&success);
+  if(success == false) 
+    printf("Invalid Expression\n");
+  else 
+    printf(">  %u\n", res);
+  return 0;
+}
+
+static int cmd_w(char *args){
+  if(args == NULL) 
+    return 0;
+  if(new_wp(args)==NULL) 
+    printf("the watch_point_pool is full!\n");
+  return 0;
+}
+
+static int cmd_d(char *args){
+  if(args == NULL) return 0;
+  free_wp(atoi(args));
+  return 0;
+}
 
 static struct {
   const char *name;
@@ -62,9 +132,14 @@ static struct {
   { "help", "Display information about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-
-  /* TODO: Add more commands */
-
+  { "si", "Let the program single step through N instructions and pause execution, When N is not given, it defaults to 1", cmd_si },
+  { "info", "print register status or watchpoint information", cmd_info},
+  { "x" , "Evaluate the expression EXPR, using the result as the starting memory address, output N consecutive 4-bytes in hexadecimal", cmd_x},
+  { "p", "Evaluate the expression EXPR", cmd_p},
+  { "w", "Suspend program execution when the value of the expression EXPR changes", cmd_w},
+  { "d", "delete the watchpoint with sequence number n", cmd_d},
+  //{ "save", "save the snapshot of nemu", cmd_save},
+  //{ "load", "load the snapshot of nemu", cmd_load},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
