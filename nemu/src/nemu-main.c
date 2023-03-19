@@ -24,7 +24,7 @@ void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
-#define CALCULATION_TEST
+//#define CALCULATION_TEST
 
 int main(int argc, char *argv[]) {
   /* Initialize the monitor. */
@@ -32,10 +32,10 @@ int main(int argc, char *argv[]) {
   am_init_monitor();
 #else
   init_monitor(argc, argv);
+    #ifdef CALCULATION_TEST
   /************************************************************************************
    * preserved to test if calculator works
   *************************************************************************************/
-  #ifdef CALCULATION_TEST
     FILE * fp=fopen("tools/gen-expr/input","r");
     char expression[70000];
     char *str;

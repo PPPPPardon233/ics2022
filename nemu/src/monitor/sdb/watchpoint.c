@@ -67,6 +67,7 @@ WP* new_wp(char *expr){
     else{
       curr->next=free_;
       curr=curr->next;
+      curr->next=NULL;
       strcpy(curr->exp,expr);
       free_=free_->next;
     }

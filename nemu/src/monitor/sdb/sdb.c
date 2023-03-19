@@ -27,6 +27,7 @@ static int is_batch_mode = false;
 void init_regex();
 void init_wp_pool();
 void print_wp();
+void free_wp(int des);
 WP* new_wp(char *expr);
 word_t vaddr_read(vaddr_t addr, int len);
 word_t expr(char *e, bool *success);
