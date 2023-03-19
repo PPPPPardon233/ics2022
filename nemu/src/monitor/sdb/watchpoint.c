@@ -92,9 +92,9 @@ void free_wp(int des){
     curr->next=NULL;
   }
   else{
+    search_(wp)->next=wp->next;
     wp->next=free_;
     free_=wp;
-    search_(wp)->next=wp->next;
   }
 };
 /* TODO: Implement the functionality of watchpoint */
