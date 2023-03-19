@@ -66,10 +66,10 @@ WP* new_wp(char *expr){
       return NULL;
     else{
       curr->next=free_;
+      free_=free_->next;
       curr=curr->next;
       curr->next=NULL;
       strcpy(curr->exp,expr);
-      free_=free_->next;
     }
   }
   return curr;
