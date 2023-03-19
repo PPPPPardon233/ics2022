@@ -119,6 +119,7 @@ void check_wp(){
 }
 void print_wp(){
   WP *itr = head;
+  printf("No         Exp      Val\n");
   while(itr != NULL){
     printf("%02d\t%10s\t%-10u\n",itr->NO,itr->exp,itr->last);
     itr = itr->next;
