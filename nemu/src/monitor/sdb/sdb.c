@@ -101,7 +101,7 @@ static int cmd_x(char *args){
 
 static int cmd_p(char *args){
   if(args == NULL) return 0;
-  bool success;
+  bool success=false;
   int res = expr(args,&success);
   if(success == false) 
     printf("Invalid Expression\n");
