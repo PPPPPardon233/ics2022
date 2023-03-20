@@ -124,7 +124,7 @@ void print_wp(){
     printf("there is no watchpoint in the pool");
     return;
   }
-  printf("%-2s%-10s%-10s\n","NO","Exp","Val");
+  printf("%-10s%-10s%-10s\n","NO","Exp","Val");
   while(itr != NULL){
     printf("%02d\t%10s\t%-10u\n",itr->NO,itr->exp,itr->last);
     itr = itr->next;
