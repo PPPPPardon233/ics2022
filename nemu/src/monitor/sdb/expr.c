@@ -207,103 +207,78 @@ unsigned int calculate(int p,int q){
           if(i == q)
             val2=calculate(count,q);
           else 
-            val2=calculate(count,tmp+1);//等号右侧的值
-          val1=stack[num_of_stack-1];//计算左侧的值
+            val2=calculate(count,tmp+1);
+          val1=stack[num_of_stack-1];
           stack[num_of_stack-1]=0;
           if(val1==val2)
             temp=0;
           else 
-            temp=1;//比较结果
+            temp=1;
           tokens[tmp].type=NUMBER;
           sprintf(tokens[tmp].str,"%u",temp);
           count=tmp;
           num_of_stack--;
-          break;//neq
+          break;
       case 249:
-        tmp=0;
-        for(i = count;i < q;i ++ ){
-          if(tokens[i].type=='(')
-            tmp+=1;
-          else if(tokens[i].type==')')
-            tmp-=1;
-          if(tmp==0){
-            tmp=i;
-            break;
-          }
-        }
-        if(i == q)
-          val2=calculate(count,q);
-        else 
-          val2=calculate(count,tmp+1);//等号右侧的值
-        val1=stack[num_of_stack-1];//计算左侧的值
-        stack[num_of_stack-1]=0;
-        temp=val1&&val2; //结果
-        tokens[tmp].type=NUMBER;
-        sprintf(tokens[tmp].str,"%u",temp);
-        count=tmp;
-        num_of_stack--;
-        break;//and
+          tmp=check_(count,q);
+          if(i == q)
+            val2=calculate(count,q);
+          else 
+            val2=calculate(count,tmp+1);
+          val1=stack[num_of_stack-1];
+          stack[num_of_stack-1]=0;
+          temp=val1&&val2;
+          tokens[tmp].type=NUMBER;
+          sprintf(tokens[tmp].str,"%u",temp);
+          count=tmp;
+          num_of_stack--;
+          break;
       case 251:
-        flag=true;
-        stack[num_of_stack++]=isa_reg_str2val(tokens[count-1].str,&flag);
-        break;//寄存器的值
+          flag=true;
+          stack[num_of_stack++]=isa_reg_str2val(tokens[count-1].str,&flag);
+          break;
       case 250:
-        tmp=0;
-        for(i = count;i < q;i ++ ){
-          if(tokens[i].type=='(')
-            tmp+=1;
-          else if(tokens[i].type==')')
-            tmp-=1;
-          if(tmp==0){
-            tmp=i;
-            break;
-          }
-        }
-        if(i == q) 
-          temp=calculate(count,q);
-        else 
-          temp=calculate(count,tmp+1);
-        tokens[tmp].type=NUMBER;
-        sprintf(tokens[tmp].str,"%u",temp);
-        count=tmp;
-        break;//处理引用
-      case 256://空格不需要操作
-        break;
+          tmp=check_(count,q);
+          if(i == q) 
+            temp=calculate(count,q);
+          else 
+            temp=calculate(count,tmp+1);
+          tokens[tmp].type=NUMBER;
+          sprintf(tokens[tmp].str,"%u",temp);
+          count=tmp;
+          break;
+      case 256:
+          break;
       case '+':
-        stack[num_of_stack++]='+';
-        sign[num_of_stack-1]='+';//加法压入栈
-        break;
-      case '-'://减法压入栈
-        stack[num_of_stack++]='-';
-        sign[num_of_stack-1]='-';
-        break; 
-      case '*'://乘法压入栈
-        stack[num_of_stack++]='*';
-        sign[num_of_stack-1]='*';
-        break;
-      case '/'://除法压入栈
-        stack[num_of_stack++]='/';
-        sign[num_of_stack-1]='/';
-        break;
+          stack[num_of_stack++]='+';
+          sign[num_of_stack-1]='+';
+          break;
+      case '-':
+          stack[num_of_stack++]='-';
+          sign[num_of_stack-1]='-';
+          break; 
+      case '*':
+          stack[num_of_stack++]='*';
+          sign[num_of_stack-1]='*';
+          break;
+      case '/':
+          stack[num_of_stack++]='/';
+          sign[num_of_stack-1]='/';
+          break;
       case 252:
-          if(num_of_stack == 0)  
-            {
+          if(num_of_stack == 0)  {
               sscanf(tokens[count-1].str,"%x", &temp);
               stack[num_of_stack++]=temp;
               break;
             }
             num_of_stack-=1;
-          if(sign[num_of_stack]=='*'||sign[num_of_stack]=='/')
-          {
+          if(sign[num_of_stack]=='*'||sign[num_of_stack]=='/'){
             temp1=stack[num_of_stack-1];
             sscanf(tokens[count-1].str,"%x", &temp2);
             if(sign[num_of_stack]=='*')
-            {
               temp1=temp1*temp2;
-            }
             else{
-              if(temp2==0)
-              {
+              if(temp2==0){
                 printf("divided by 0\n");
                 return 0;
               }
@@ -318,26 +293,21 @@ unsigned int calculate(int p,int q){
             stack[num_of_stack+1]=temp;
             num_of_stack+=2;
           }
-          break;//遇到数字处理乘法和除法
+          break;
       case 254:
-          if(num_of_stack == 0)  
-            {
+          if(num_of_stack == 0)  {
               sscanf(tokens[count-1].str,"%u", &temp);
               stack[num_of_stack++]=temp;
               break;
             }
             num_of_stack-=1;
-          if(sign[num_of_stack]=='*'||sign[num_of_stack]=='/')
-          {
+          if(sign[num_of_stack]=='*'||sign[num_of_stack]=='/'){
             temp1=stack[num_of_stack-1];
             sscanf(tokens[count-1].str,"%u", &temp2);
             if(sign[num_of_stack]=='*')
-            {
               temp1=temp1*temp2;
-            }
             else{
-              if(temp2==0)
-              {
+              if(temp2==0){
                 printf("divided by 0\n");
                 return 0;
               }
@@ -352,7 +322,7 @@ unsigned int calculate(int p,int q){
             stack[num_of_stack+1]=temp;
             num_of_stack+=2;
           }
-          break;//遇到数字处理乘法和除法
+          break;
       case '(':
           stack[num_of_stack++]='(';
           sign[num_of_stack-1]='(';
@@ -360,41 +330,36 @@ unsigned int calculate(int p,int q){
       case ')':
           temp=0;
           num_of_stack-=1;
-          while(sign[num_of_stack]!='(')
-          {
-            switch(sign[num_of_stack])
-            {
+          while(sign[num_of_stack]!='('){
+            switch(sign[num_of_stack]){
               case '-':
-                if(stack[num_of_stack-2]!='(' && sign[num_of_stack-2]==sign[num_of_stack])
-              {
-                temp=stack[num_of_stack-1]+temp;
-                sign[num_of_stack]=0;
-                stack[num_of_stack]=0;
-                stack[num_of_stack-1]=temp;
-              }     
+                if(stack[num_of_stack-2]!='(' && sign[num_of_stack-2]==sign[num_of_stack]){
+                  temp=stack[num_of_stack-1]+temp;
+                  sign[num_of_stack]=0;
+                  stack[num_of_stack]=0;
+                  stack[num_of_stack-1]=temp;
+                }     
                 else if(stack[num_of_stack-2]!='('){
-                temp=stack[num_of_stack-1]-temp;
-                sign[num_of_stack]=0;
-                stack[num_of_stack]=0;
-                stack[num_of_stack-1]=temp;
-              }
+                  temp=stack[num_of_stack-1]-temp;
+                  sign[num_of_stack]=0;
+                  stack[num_of_stack]=0;
+                  stack[num_of_stack-1]=temp;
+                }
                 else{
-                temp=stack[num_of_stack-1]-temp;
-                stack[num_of_stack-1]=temp;
-              }
+                  temp=stack[num_of_stack-1]-temp;
+                  stack[num_of_stack-1]=temp;
+                }
                 sign[num_of_stack]=0;
                 num_of_stack--;
                 break;
               case '+':
-                if(stack[num_of_stack-2]!='(' && sign[num_of_stack-2]==sign[num_of_stack])
-                {
+                if(stack[num_of_stack-2]!='(' && sign[num_of_stack-2]==sign[num_of_stack]){
                   temp=stack[num_of_stack-1]+temp;
                   sign[num_of_stack]=0;
                   stack[num_of_stack]=0;
                   stack[num_of_stack-1]=temp;
                 }
-                else if(stack[num_of_stack-2]!='(')
-                {
+                else if(stack[num_of_stack-2]!='('){
                   temp=stack[num_of_stack-1]-temp;
                   sign[num_of_stack]=0;
                   stack[num_of_stack]=0;
@@ -412,23 +377,24 @@ unsigned int calculate(int p,int q){
                 stack[num_of_stack]=0;
                 num_of_stack--;
             }
-          }//括号里只有加减法，计算结果
+          }
           sign[num_of_stack]=0;
           count-=1;
           tokens[count].type=254;
-          sprintf(tokens[count].str,"%u",temp); //把得到的值再次进行判断，处理a*(b+c)的情况
+          sprintf(tokens[count].str,"%u",temp); 
           break;   
       default:assert(0);
     }
-  } //将所有的值的压入栈中。其中计算处理了括号中的数和乘除法
+  } 
+  /*
+  *we have pushed all the vals into the stack.wo also dealt with the nums
+  *of the call sign(translated by Bing)
+  */
   temp=stack[--num_of_stack];
-  while( num_of_stack > 0)
-  {
-    switch(sign[num_of_stack])
-    {
+  while( num_of_stack > 0){
+    switch(sign[num_of_stack]){
       case '-':
-        if(num_of_stack > 2 && sign[num_of_stack-2]==sign[num_of_stack])
-        {
+        if(num_of_stack > 2 && sign[num_of_stack-2]==sign[num_of_stack]){
           temp=stack[num_of_stack-1]+temp;
           sign[num_of_stack]=0;
           stack[num_of_stack]=0;
@@ -447,15 +413,13 @@ unsigned int calculate(int p,int q){
         num_of_stack--;
         break;
       case '+':
-        if(num_of_stack > 2 && sign[num_of_stack-2]==sign[num_of_stack])
-        {
+        if(num_of_stack > 2 && sign[num_of_stack-2]==sign[num_of_stack]){
           temp=stack[num_of_stack-1]+temp;
           sign[num_of_stack]=0;
           stack[num_of_stack]=0;
           stack[num_of_stack-1]=temp;
         }
-        else if(num_of_stack >2)
-        {
+        else if(num_of_stack >2){
           temp=stack[num_of_stack-1]-temp;
           sign[num_of_stack]=0;
           stack[num_of_stack]=0;
@@ -472,6 +436,6 @@ unsigned int calculate(int p,int q){
         stack[num_of_stack]=0;
         num_of_stack--;
     }
-  }//只有加减法的运算且无括号
+  }
   return temp;
 }
