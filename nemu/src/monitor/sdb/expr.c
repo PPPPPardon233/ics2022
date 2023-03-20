@@ -383,7 +383,8 @@ unsigned int calculate(int p,int q){
           tokens[count].type=254;
           sprintf(tokens[count].str,"%u",temp); 
           break;   
-      default:assert(0);
+      default:
+          assert(0);
     }
   } 
   /*
