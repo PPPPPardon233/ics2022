@@ -59,3 +59,9 @@ else
 # Include rules to build NEMU
 include $(NEMU_HOME)/scripts/native.mk
 endif
+
+COUNT_L := $(shell  find . -name "*.h" -or -name "*.c" | xargs grep -Ev "^$$" | wc -l) 
+COUNT_ADD := $(shell expr $(COUNT_L) - 19783)
+count:
+	@echo $(COUNT_L) lines in nemu except empty line
+	@echo $(COUNT_ADD) lines added into the frame code without counting empty line
