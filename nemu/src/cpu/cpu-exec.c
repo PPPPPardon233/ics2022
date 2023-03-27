@@ -47,8 +47,7 @@ void device_update();
 
 static void print_ringbuf() {
 	printf(ANSI_FMT("Here are nearest %d lines instructions\n", ANSI_FG_RED), RB_LINES);
-	int i=RB_INDEX % RB_LINES;
-	for (; i < RB_INDEX; i++) 
+	for (int i=RB_INDEX % RB_LINES; i < RB_LINES; i++) 
 		printf(ANSI_FMT("%s\n", ANSI_FG_RED), ring_buffer[i%RB_LINES]);
 }
 
