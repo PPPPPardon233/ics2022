@@ -53,12 +53,15 @@ WP* search_(WP *wp){
   }
   return temp;
 }
-WP* new_wp(char *expr){
+WP* new_wp(char *exp){
   if(head==NULL){
     head=free_;
     free_=free_->next;
     head->next=NULL;
-    strcpy(head->exp,expr);
+    strcpy(head->exp,exp);
+    bool success;
+    uint32_t res = expr(head->exp,&success);
+    if(success) head->last=res;
     curr=head;
   }
   else{
@@ -69,7 +72,10 @@ WP* new_wp(char *expr){
       free_=free_->next;
       curr=curr->next;
       curr->next=NULL;
-      strcpy(curr->exp,expr);
+      strcpy(curr->exp,exp);
+      bool success;
+      uint32_t res = expr(curr->exp,&success);
+      if(success) curr->last=res;
     }
   }
   return curr;
