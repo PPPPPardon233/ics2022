@@ -43,8 +43,14 @@ static bool g_print_step = false;
 char ring_buffer[RB_LINES][RB_LENGTH];
 int RB_INDEX = 0;
 
-
 void device_update();
+
+static void print_ringbuf() {
+	printf(ANSI_FMT("Here are nearest %d lines instructions\n", ANSI_FG_RED), RB_LINES);
+	int i=RB_INDEX % RB_LINES;
+	for (; i < RB_INDEX; i++) 
+		printf(ANSI_FMT("%s\n", ANSI_FG_RED), ring_buffer[i%RB_LINES]);
+}
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
@@ -128,9 +134,13 @@ void cpu_exec(uint64_t n) {
   g_timer += timer_end - timer_start;
 
   switch (nemu_state.state) {
-    case NEMU_RUNNING: nemu_state.state = NEMU_STOP; break;
+    case NEMU_RUNNING: 
+      nemu_state.state = NEMU_STOP; 
+      break;
+    case NEMU_END: 
 
-    case NEMU_END: case NEMU_ABORT:
+    case NEMU_ABORT:
+      print_ringbuf();
       Log("nemu: %s at pc = " FMT_WORD,
           (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) :
            (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) :
