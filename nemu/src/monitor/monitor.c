@@ -136,7 +136,7 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Analyze the func-call relationship*/
   if (elf_file || (ramdisk_file && appname))
-    printf("hhhhhhhhhhhh");
+    printf("########################\n");
 
   /* Initialize the simple debugger. */
   init_sdb();
