@@ -141,6 +141,11 @@ config ITRACE
   bool "Enable instruction tracer"
   default y
 
+config MTRACE
+  depends on TRACE
+  bool "Enable memory tracer"
+  default y
+
 config ITRACE_COND
   depends on ITRACE
   string "Only trace instructions when the condition is true"
