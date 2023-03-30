@@ -173,4 +173,5 @@ void print_stack_trace(){
         if(r->des_info) printf("%s",r->des_info->func_name);
         else printf(" ");
     }
+    printf("##############");
 }
