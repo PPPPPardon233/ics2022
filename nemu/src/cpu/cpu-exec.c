@@ -17,6 +17,7 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
+#include "../monitor/ftrace.c"
 
 typedef struct watchpoint {} WP;
 WP* new_wp();
@@ -123,6 +124,7 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
+  print_stack_trace();
   isa_reg_display();
   statistic();
 }
