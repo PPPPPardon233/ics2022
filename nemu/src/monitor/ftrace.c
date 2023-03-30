@@ -47,7 +47,7 @@ static void append_(char* func_name, paddr_t start, size_t size){
     end++;
 }
 
-FUNC_INFO* check_func(paddr_t addr){
+FUNC_INFO* check_func_(paddr_t addr){
     for (int i = 0; i < end; ++i){
         FUNC_INFO *info = &elf_funcs[i];
         if (addr >= info->start && addr < info->start + info->size){
@@ -62,8 +62,8 @@ static void append(paddr_t cur, paddr_t des, int type){
     tail->next = node;
     node->next = NULL;
     node->addr = cur;
-    node->cur_info = check_func(cur);
-    node->des_info = check_func(des);
+    node->cur_info = check_func_(cur);
+    node->des_info = check_func_(des);
     node->type = type;
     tail = node;
 }
