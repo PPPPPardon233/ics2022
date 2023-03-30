@@ -26,6 +26,7 @@ typedef struct {
 static FUNC_INFO elf_funcs[1024];
 static STACK_ENTRY header;
 static STACK_ENTRY *tail = &header;
+static char *action_name[] = {"Call", "Ret"};
 
 static void read_from_file(FILE *elf, size_t offset, size_t size, void* dest){
     fseek(elf, offset, SEEK_SET);
@@ -162,6 +163,14 @@ void print_stack_trace(){
         //     ASNI_FMT("\t<%#x> ", ASNI_FG_YELLOW) ASNI_FMT("%-12s \n", ASNI_FG_BLUE),  
         //     r->addr, r->cur_info ? r->cur_info->func_name : "", action_name[r->type], 
         //     r->des_info ? r->des_info->start : 0, r->des_info ? r->des_info->func_name : "");
+        
         printf("%d",r->addr);
+        if(r->cur_info) printf("%s",r->cur_info->func_name);
+        else printf(" ");
+        printf("%s",action_name[r->type]);
+        if(r->des_info) printf("%d",r->des_info->start);
+        else printf("0");
+        if(r->des_info) printf("%s",r->des_info->func_name);
+        else printf(" ");
     }
 }
