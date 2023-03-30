@@ -16,6 +16,7 @@
 #include <isa.h>
 #include <memory/paddr.h>
 
+
 void init_rand();
 void init_log(const char *log_file);
 void init_mem();
@@ -23,6 +24,7 @@ void init_difftest(char *ref_so_file, long img_size, int port);
 void init_device();
 void init_sdb();
 void init_disasm(const char *triple);
+void init_elf(const char* elf_file, size_t global_offset);
 
 static void welcome() {
   Log("Trace: %s", MUXDEF(CONFIG_TRACE, ANSI_FMT("ON", ANSI_FG_GREEN), ANSI_FMT("OFF", ANSI_FG_RED)));
@@ -131,8 +133,7 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Analyze the func-call relationship*/
   if (elf_file)
-    //init_ftracer(elf_file, ramdisk_file, appname);
-    printf("hhhhhhhhhhhhhhhhhhhhhhhhhhh");
+    init_elf(elf_file,0);
 
   /* Initialize the simple debugger. */
   init_sdb();

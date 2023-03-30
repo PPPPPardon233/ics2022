@@ -29,8 +29,6 @@
 #elif defined(CONFIG_ISA_x86)
 #define ISA_QEMU_BIN "qemu-system-i386"
 #define ISA_QEMU_ARGS
-#else
-#error Unsupport ISA
 #endif
 
 union isa_gdb_regs {
