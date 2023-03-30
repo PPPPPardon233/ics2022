@@ -164,8 +164,8 @@ void print_stack_trace(){
         //     r->addr, r->cur_info ? r->cur_info->func_name : "", action_name[r->type], 
         //     r->des_info ? r->des_info->start : 0, r->des_info ? r->des_info->func_name : "");
         
-        printf("%x: [in ",r->addr);
-        if(r->cur_info) printf("%s] %-8s",r->cur_info->func_name," ");
+        printf("%x: in ",r->addr);
+        if(r->cur_info) printf("%-10s",r->cur_info->func_name);
         printf("%s ",action_name[r->type]);
         if(r->des_info) printf("%x@",r->des_info->start);
         if(r->des_info) printf("%s\n",r->des_info->func_name);
