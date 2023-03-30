@@ -1,7 +1,7 @@
 #include <elf.h>
 #include <stdio.h>
 #include <string.h>
-#include "../../tools/qemu-diff/include/common.h"
+#include "ftrace.h"
 
 typedef struct __FUNC_INFO{
     char func_name[64];
