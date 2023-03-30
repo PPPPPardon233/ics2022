@@ -161,7 +161,7 @@ void print_stack_trace(){
     for (STACK_ENTRY* cur = &header; cur != tail; cur = cur->next){
         STACK_ENTRY* r = cur->next;
         printf("%x: in ",r->addr);
-        if(r->cur_info) printf("%-6s",r->cur_info->func_name);
+        if(r->cur_info) printf("%-10s",r->cur_info->func_name);
         
         r->type?depth--:depth++;
         for(int i=0;i<depth;i++)
