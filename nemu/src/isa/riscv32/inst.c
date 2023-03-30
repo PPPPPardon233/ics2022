@@ -17,7 +17,7 @@
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
-#include "../../monitor/ftrace.c"
+#include "../../monitor/ftrace.h"
 #define R(i) gpr(i)
 #define Mr vaddr_read
 #define Mw vaddr_write
