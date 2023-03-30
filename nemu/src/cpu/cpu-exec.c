@@ -17,7 +17,7 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
-#include "../monitor/ftrace.c"
+#include "../monitor/ftrace.h"
 
 typedef struct watchpoint {} WP;
 WP* new_wp();
