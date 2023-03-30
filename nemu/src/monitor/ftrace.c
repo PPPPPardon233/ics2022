@@ -165,11 +165,11 @@ void print_stack_trace(){
         //     r->des_info ? r->des_info->start : 0, r->des_info ? r->des_info->func_name : "");
         
         printf("%d",r->addr);
-        if(r->cur_info) printf("%s\n",r->cur_info->func_name);
-        else printf(" \n");
-        printf("%s\n",action_name[r->type]);
-        if(r->des_info) printf("%d\n",r->des_info->start);
-        else printf("0\n");
+        if(r->cur_info) printf("%s ",r->cur_info->func_name);
+        else printf(" ");
+        printf("%s ",action_name[r->type]);
+        if(r->des_info) printf("%d ",r->des_info->start);
+        else printf("0 ");
         if(r->des_info) printf("%s\n",r->des_info->func_name);
         else printf(" \n");
     }
