@@ -157,17 +157,18 @@ void init_elf(const char* elf_file, size_t global_offset){
 }
 
 void print_stack_trace(){
+    int depth=0;
     for (STACK_ENTRY* cur = &header; cur != tail; cur = cur->next){
         STACK_ENTRY* r = cur->next;
-        // printf("<%#x>" ASNI_FMT(" %-12s ", ASNI_FG_BLUE) ASNI_FMT("%s", ASNI_FG_WHITE)  
-        //     ASNI_FMT("\t<%#x> ", ASNI_FG_YELLOW) ASNI_FMT("%-12s \n", ASNI_FG_BLUE),  
-        //     r->addr, r->cur_info ? r->cur_info->func_name : "", action_name[r->type], 
-        //     r->des_info ? r->des_info->start : 0, r->des_info ? r->des_info->func_name : "");
-        
+        //printf(ANSI_FMT("> %s\n", ANSI_FG_RED), ring_buffer[i]);
         printf("%x: in ",r->addr);
         if(r->cur_info) printf("%-10s",r->cur_info->func_name);
+        
+        r->type?depth--:depth++;
+        for(int i=0;i<depth;i++)
+            printf(" ");
+
         printf("%s ",action_name[r->type]);
-        if(r->des_info) printf("%x@",r->des_info->start);
-        if(r->des_info) printf("%s\n",r->des_info->func_name);
+        if(r->des_info) printf("%x@%s\n",r->des_info->start,r->des_info->func_name);
     }
 }
