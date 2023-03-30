@@ -1,4 +1,3 @@
-#ifdef CONFIG_FTRACE
 #include <elf.h>
 #include <stdio.h>
 #include <string.h>
@@ -172,4 +171,3 @@ void print_stack_trace(){
         if(r->des_info) printf("%x@%s\n",r->des_info->start,r->des_info->func_name);
     }
 }
-#endif

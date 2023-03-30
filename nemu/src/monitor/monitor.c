@@ -133,7 +133,9 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Analyze the func-call relationship*/
   if (elf_file)
-    init_elf(elf_file,0);
+    #ifdef CONFIG_FTRACE
+      init_elf(elf_file,0);
+    #endif
 
   /* Initialize the simple debugger. */
   init_sdb();
