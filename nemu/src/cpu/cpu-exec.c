@@ -39,19 +39,19 @@ word_t expr(char *e, bool *success);
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
+static bool g_print_step = false;
 
 #ifdef CONFIG_ITRACE_COND
   #define RB_LINES 16
   #define RB_LENGTH 128
-  static bool g_print_step = false;
   char ring_buffer[RB_LINES][RB_LENGTH];
   int RB_INDEX = 0;
 #endif
 
 void device_update();
 
-static void print_ringbuf() {
 #ifdef CONFIG_ITRACE_COND
+static void print_ringbuf() {
 	printf(ANSI_FMT("Here are nearest %d lines instructions\n", ANSI_FG_RED), RB_LINES);
 	for (int i=0 ; i < RB_LINES; i++) {
     if(i==(RB_INDEX-1)%RB_LINES) {
@@ -61,9 +61,8 @@ static void print_ringbuf() {
       printf(ANSI_FMT("  %s\n", ANSI_FG_RED), ring_buffer[i]);
     }
   }
-#endif
 }
-
+#endif
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
   if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
