@@ -31,16 +31,9 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
       Assert(ref_r->pc == pc, "PC expected %x but got %x", ref_r->pc, pc);
       return false;
     }
-    //printf("same\n");
+    printf("same\n");
   }
   return true;
-  if (ref_r->pc == pc){
-    return true;
-  }
-  else {
-    Log("PC expected %x but got %x\n", ref_r->pc, pc);
-    return true;
-  }
 }
 
 void isa_difftest_attach() {
