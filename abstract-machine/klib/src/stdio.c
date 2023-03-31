@@ -49,8 +49,6 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
 	int num, len;
 	unsigned int unum;
 	uint32_t pointer;
-  
-  
 	int state = 0, i, j;
 	for (i = 0, j = 0; fmt[i] != '\0'; ++i){
 		switch (state){
