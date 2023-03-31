@@ -28,7 +28,6 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   for (int i = 0; i < 32; i++){
     Assert(ref_r->gpr[i] == cpu.gpr[i],"[%s]reg: expceted %x, but got %x\n", reg[i], ref_r->gpr[i], cpu.gpr[i]);
     //Assert(ref_r->pc == pc, "PC expected %x but got %x\n", ref_r->pc, pc);
-    printf("PC expected %x but got %x\n", ref_r->pc, pc);
   }
   return true;
 }
