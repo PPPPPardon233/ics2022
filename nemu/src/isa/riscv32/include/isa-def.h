@@ -64,7 +64,6 @@ typedef struct { // 自行添加，但并不知道是否会引起问题
   rtlreg_t mscratch;
 } riscv32_CSR_state;
 
-extern riscv32_CSR_state csr;
 #define isa_mmu_check(vaddr, len, type) (MMU_DIRECT)
 
 #endif

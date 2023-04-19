@@ -15,7 +15,7 @@
 
 #include <isa.h>
 #include "../include/isa-def.h"
-
+riscv32_CSR_state csr;
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* TODO: Trigger an interrupt/exception with ``NO''.
    * Then return the address of the interrupt/exception vector.
