@@ -27,7 +27,7 @@ enum {
   TYPE_N, TYPE_J, TYPE_B, TYPE_R, // none
 };
 
-void csrrwrs(word_t destination, word_t source1, word_t imm, bool tt){
+void csrrwrs(word_t dest, word_t src1, word_t imm, bool temp){
 	word_t t, *ptr = &gpr(0);
 	if ( imm == 773 ) {
 		ptr = &cpu.csr.mtvec;
@@ -40,12 +40,12 @@ void csrrwrs(word_t destination, word_t source1, word_t imm, bool tt){
 	}
 
 	t = *ptr;
-	if ( tt ) {
-		*ptr = source1;
+	if ( temp ) {
+		*ptr = src1;
 	} else {
-		*ptr = t | source1;
+		*ptr = t | src1;
 	}
-	gpr(destination) = t;
+	gpr(dest) = t;
 }
 
 #define src1R() do { *src1 = R(rs1); } while (0)
