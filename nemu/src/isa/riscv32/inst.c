@@ -27,18 +27,27 @@ enum {
   TYPE_N, TYPE_J, TYPE_B, TYPE_R, // none
 };
 
-static vaddr_t *csr_register(word_t imm) {
-  switch (imm){
-	case 0x341: return &(cpu.csr.mepc);
-	case 0x342: return &(cpu.csr.mcause);
-	case 0x300: return &(cpu.csr.mstatus);
-	case 0x305: return &(cpu.csr.mtvec);
-	default: panic("Unknown csr");
-  }
+void csrrwrs(word_t destination, word_t source1, word_t imm, bool tt){
+	word_t t, *ptr = &gpr(0);
+	if ( imm == 773 ) {
+		ptr = &cpu.csr.mtvec;
+	} else if ( imm == 768 ) {
+		ptr = &cpu.csr.mstatus;
+	} else if ( imm == 833 ) {
+		ptr = &cpu.csr.mepc;
+	} else if ( imm == 834 ) {
+		ptr = &cpu.csr.mcause;
+	}
+
+	t = *ptr;
+	if ( tt ) {
+		*ptr = source1;
+	} else {
+		*ptr = t | source1;
+	}
+	gpr(destination) = t;
 }
 
-#define ECALL(dnpc) { bool success; dnpc = (isa_raise_intr(isa_reg_str2val("a7", &success), s->pc)); }
-#define CSR(i) *csr_register(i)
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
 #define immI()  do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
@@ -93,9 +102,9 @@ static int decode_exec(Decode *s) {
 	INSTPAT("??????? ????? ????? 100 ????? 00100 11", xori   , I, R(dest) = src1 ^ imm);
 	INSTPAT("??????? ????? ????? 110 ????? 00100 11", ori    , I, R(dest) = src1 | imm);
 	INSTPAT("??????? ????? ????? 010 ????? 00100 11", slti   , I, R(dest) = (int)src1 < (int)imm ? 1 : 0);
-	INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(dest) = CSR(imm); CSR(imm) = src1);
-	INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(dest) = CSR(imm); CSR(imm) |= src1);
-	INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, ECALL(s->dnpc));
+	INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, csrrwrs(dest, src1, imm, true));
+	INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs, I, csrrwrs(dest, src1, imm, false));
+	INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, I, s->dnpc = isa_raise_intr(cpu.gpr[17], s->snpc));
 
 
   	INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw     , S, Mw(src1 + imm, 4, src2));
