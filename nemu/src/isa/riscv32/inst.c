@@ -27,13 +27,25 @@ enum {
   TYPE_N, TYPE_J, TYPE_B, TYPE_R, // none
 };
 
+static vaddr_t *csr_register(word_t imm) {
+  switch (imm){
+	case 0x341: return &(cpu.csr.mepc);
+	case 0x342: return &(cpu.csr.mcause);
+	case 0x300: return &(cpu.csr.mstatus);
+	case 0x305: return &(cpu.csr.mtvec);
+	default: panic("Unknown csr");
+  }
+}
+
+#define ECALL(dnpc) { bool success; dnpc = (isa_raise_intr(isa_reg_str2val("a7", &success), s->pc)); }
+#define CSR(i) *csr_register(i)
 #define src1R() do { *src1 = R(rs1); } while (0)
 #define src2R() do { *src2 = R(rs2); } while (0)
-#define immI() do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
-#define immU() do { *imm = SEXT(BITS(i, 31, 12), 20) << 12; } while(0)
-#define immS() do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
-#define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 20) | (BITS(i, 19, 12) << 12) | (BITS(i, 20, 20) << 11) | (BITS(i, 30, 21) << 1) | 0; } while(0)
-#define immB() do { *imm = (SEXT(BITS(i, 31, 31) ,1) << 12) | (BITS(i, 30, 25) << 5) | (BITS(i ,11, 8) << 1) | (BITS(i, 7, 7) << 11); } while(0)
+#define immI()  do { *imm = SEXT(BITS(i, 31, 20), 12); } while(0)
+#define immU()  do { *imm = SEXT(BITS(i, 31, 12), 20) << 12; } while(0)
+#define immS()  do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
+#define immJ()  do { *imm = (SEXT(BITS(i, 31, 31), 1) << 20) | (BITS(i, 19, 12) << 12) | (BITS(i, 20, 20) << 11) | (BITS(i, 30, 21) << 1) | 0; } while(0)
+#define immB()  do { *imm = (SEXT(BITS(i, 31, 31) ,1) << 12) | (BITS(i, 30, 25) << 5) | (BITS(i ,11, 8) << 1) | (BITS(i, 7, 7) << 11); } while(0)
 
 static void decode_operand(Decode *s, int *dest, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst.val;
@@ -80,7 +92,11 @@ static int decode_exec(Decode *s) {
 	INSTPAT("0100000 ????? ????? 101 ????? 00100 11", srai   , I, R(dest) = (int)src1 >> (int)imm);
 	INSTPAT("??????? ????? ????? 100 ????? 00100 11", xori   , I, R(dest) = src1 ^ imm);
 	INSTPAT("??????? ????? ????? 110 ????? 00100 11", ori    , I, R(dest) = src1 | imm);
-	INSTPAT("??????? ????? ????? 010 ????? 00100 11", slti  ,  I, R(dest) = (int)src1 < (int)imm ? 1 : 0);
+	INSTPAT("??????? ????? ????? 010 ????? 00100 11", slti   , I, R(dest) = (int)src1 < (int)imm ? 1 : 0);
+	INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw  , I, R(dest) = CSR(imm); CSR(imm) = src1);
+	INSTPAT("??????? ????? ????? 010 ????? 11100 11", csrrs  , I, R(dest) = CSR(imm); CSR(imm) |= src1);
+	INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, ECALL(s->dnpc));
+
 
   	INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw     , S, Mw(src1 + imm, 4, src2));
 	INSTPAT("??????? ????? ????? 000 ????? 01000 11", sb     , S, Mw(src1 + imm, 1, src2));
