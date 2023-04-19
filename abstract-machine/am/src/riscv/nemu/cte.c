@@ -10,11 +10,13 @@ Context* __am_irq_handle(Context *c) {
     // switch (c->mcause) {
     //   default: ev.event = EVENT_ERROR; break;
     // }
-    if( c->mcause >= 0 && c->mcause < 20 )
-			ev.event = EVENT_SYSCALL;
+    if( c->mcause >= 0 && c->mcause < 20 ){
+      ev.event = EVENT_SYSCALL;
+    }
 		else if ( c->mcause == -1 ) {
       ev.event = EVENT_YIELD;
-    } else {
+    } 
+    else {
       ev.event = EVENT_ERROR;
     }
     c = user_handler(ev, c);
