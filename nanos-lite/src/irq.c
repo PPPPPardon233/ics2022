@@ -3,7 +3,11 @@
 static Context* do_event(Event e, Context* c) {
   if (e.event == EVENT_YIELD ) {
     printf("EVENT_YIELD, event ID %d\n", e.event);
-  } else {
+  }
+  else if (e.event == EVENT_SYSCALL ) {
+    printf("EVENT_SYSCALL, do_event ID %d, count %d", e.event, c->GPR4); 
+  }
+  else {
     panic("PANIC event ID %d", e.event);
   }
 
