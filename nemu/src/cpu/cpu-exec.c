@@ -123,8 +123,8 @@ static void statistic() {
 }
 
 void assert_fail_msg() {
-  print_stack_trace();
-  isa_reg_display();
+  //print_stack_trace();
+  //isa_reg_display();
   statistic();
 }
 
