@@ -7,7 +7,7 @@ static Context* do_event(Event e, Context* c) {
     printf("EVENT_YIELD, event ID %d\n", e.event);
   }
   else if (e.event == EVENT_SYSCALL ) {
-    printf("EVENT_SYSCALL, do_event ID %d, count %d", e.event, c->GPR4); 
+    printf("EVENT_SYSCALL, do_event ID %d, count %d\n", e.event, c->GPR4); 
     do_syscall(c);
   }
   else {
