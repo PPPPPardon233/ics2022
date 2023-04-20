@@ -17,15 +17,15 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 	{
 		panic("fd shoud less then 3");
 	}
-
+  /*
+  * Check whether the elf-file meets the specification 
+  */
 	fs_read(fd, &header, sizeof(Elf32_Ehdr));
-	if (*(uint32_t *)header.e_ident == 0x464c457f)
-	{
+	if (*(uint32_t *)header.e_ident == 0x464c457f){
 		panic("header.e_ident == 0x464c457f");
 	}
 	assert(header.e_phnum < 8);
-	if (header.e_phnum < 8)
-	{
+	if (header.e_phnum < 8){
 		panic("header.e_phnum < 8");
 	}
 
