@@ -24,7 +24,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 	if (*(uint32_t *)header.e_ident == 0x464c457f){
 		panic("header.e_ident == 0x464c457f");
 	}
-	assert(header.e_phnum < 8);
 	if (header.e_phnum < 8){
 		panic("header.e_phnum < 8");
 	}
@@ -34,11 +33,8 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 	fs_lseek(fd, header.e_phoff, SEEK_SET);
 
 	fs_read(fd, pro_header, sizeof(Elf32_Phdr) * header.e_phnum);
-	for (int i = 0; i < header.e_phnum; i++)
-	{
-
-		if (pro_header[i].p_type == PT_LOAD)
-		{
+	for (int i = 0; i < header.e_phnum; i++){
+		if (pro_header[i].p_type == PT_LOAD){
 			fs_lseek(fd, pro_header[i].p_offset, SEEK_SET);
 			fs_read(fd, (void *)(pro_header[i].p_vaddr), pro_header[i].p_filesz);
 			memset((void *)(pro_header[i].p_vaddr + pro_header[i].p_filesz), 0, pro_header[i].p_memsz - pro_header[i].p_filesz);
