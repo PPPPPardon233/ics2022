@@ -66,23 +66,16 @@ int _write(int fd, void *buf, size_t count) {
 }
 
 extern char end;
-void * program_break = NULL;
-
 void *_sbrk(intptr_t increment) {
-  if (program_break == NULL){// 初始化
-    program_break = &end;
+  static char *myend = &end;
+  if (_syscall_(SYS_brk, increment, 0, 0) == 0) {
+    void *ret = myend;
+    myend += increment;
+    return (void*)ret;
   }
-  void *old_program_break = program_break;
-  
-  int ret = _syscall_(SYS_brk, (intptr_t)(program_break + increment), 0, 0);
-  if (ret == 0){
-    program_break = program_break + increment;
-  }else {
-    assert(0);
-  }
-  
-  return old_program_break;
+  return (void*)-1;
 }
+
 
 int _read(int fd, void *buf, size_t count) {
   _exit(SYS_read);
