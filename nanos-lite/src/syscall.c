@@ -77,6 +77,10 @@ int sys_lseek(Context *c){
   return fs_lseek(c->GPR2, c->GPR3, c->GPR4);
 }
 
+int sys_brk(Context *c){
+  return 0;
+}
+
 void do_syscall(Context *c) {
   Log("strace", c->mcause, c->GPR1, c->GPR2, c->GPR3, c->GPR4);
 
@@ -103,7 +107,7 @@ void do_syscall(Context *c) {
   } else if ( a[0] == SYS_gettimeofday) {
     c->GPRx = sys_gettimeofday(c);
   } else if ( a[0] == SYS_brk) {
-    c->GPRx = 0;
+    c->GPRx = sys_brk(c);
   } else {
     panic("Unhandled syscall ID = %d", a[0]);
   }
