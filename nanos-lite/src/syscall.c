@@ -39,9 +39,15 @@ int sys_exit()
 	return 0;
 }
 
-int sys_write(int fd, const void *buf, size_t count)
-{
-	return fs_write(fd, buf, count);
+void sys_write(Context *c){
+	if (c->GPR2 == 1 || c->GPR2 == 2){
+    for (int i = 0; i < c->GPR4; ++i){
+      putch(*(((char *)c->GPR3) + i));
+    }
+    c->GPRx = c->GPR4;
+  }
+  else  
+    c->GPRx = fs_write(c->GPR2, (void *)c->GPR3, c->GPR4);
 }
 
 int sys_gettimeofday(Context *c)
@@ -85,7 +91,7 @@ void do_syscall(Context *c) {
   } else if ( a[0] == SYS_yield) {
     c->GPRx = sys_yield();
   } else if ( a[0] == SYS_write )  {
-    c->GPRx = sys_write(a[1], (void *)a[2], a[3]);
+    /* c->GPRx = */sys_write(c);
   } else if ( a[0] == SYS_open ) {
     c->GPRx = sys_open(c);
   } else if ( a[0] == SYS_read) {
