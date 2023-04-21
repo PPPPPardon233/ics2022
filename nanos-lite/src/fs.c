@@ -40,7 +40,7 @@ int fs_open(const char *path, int flags, int mode){
 	for (int i = 0; i < sizeof(file_table) / sizeof(Finfo); ++i){
     if (strcmp(path, file_table[i].name) == 0){
       file_table[i].open_offset = 0;
-      Log("num:%d\n",i);
+      Log("Opening %s,whose file descriptor is %d\n",file_table[i].name,i);
       return i;
     }
   }
