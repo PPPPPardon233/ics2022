@@ -67,44 +67,19 @@ size_t fs_read(int fd, void *buf, size_t len){
 }
 
 size_t fs_write(int fd, const void *buf, size_t len){
-	// Finfo *info = &file_table[fd];
-  // size_t real_len;
+	Finfo *info = &file_table[fd];
+  size_t real_len;
   
-  // if (info->write){
-  //   real_len = info->write(buf, info->open_offset, len);
-  // }
-  // else {
-  //   assert(info->open_offset + len <= info->size);
-  //   ramdisk_write(buf, info->disk_offset + info->open_offset, len);
-  //   real_len = len;
-  // }
-  // info->open_offset += real_len;
-  // return real_len;
-  size_t ret = -1;
-	size_t wlength = 0;
-	size_t filesz = file_table[fd].size;
-	size_t open_offset = file_table[fd].open_offset;
-
-	if ( len > filesz - open_offset ) {
-		wlength = filesz - open_offset;
-	} else {
-		wlength = len;
-	}
-
-	if ( wlength <= 0 ) wlength = 0;
-
-	size_t offset = file_table[fd].disk_offset + file_table[fd].open_offset;
-	if (file_table[fd].write == NULL)
-	{
-		ret = ramdisk_write(buf, offset, wlength);
-		file_table[fd].open_offset += wlength;
-	}
-	else
-	{
-		return file_table[fd].write(buf, offset, len);
-	}
-
-	return ret;
+  if (info->write){
+    real_len = info->write(buf, info->open_offset, len);
+  }
+  else {
+    assert(info->open_offset + len <= info->size);
+    ramdisk_write(buf, info->disk_offset + info->open_offset, len);
+    real_len = len;
+  }
+  info->open_offset += real_len;
+  return real_len;
 }
 
 size_t fs_lseek(int fd, size_t offset, int whence){
