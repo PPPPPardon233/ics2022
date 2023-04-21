@@ -3,6 +3,7 @@
 
 int main() {
   FILE *fp = fopen("/share/files/num", "r+");
+  write(1, "Hello World!\n", 13);
   assert(fp);
   printf("Hello World from file-test!\n");
   fseek(fp, 0, SEEK_END);
@@ -33,7 +34,6 @@ int main() {
   }
 
   fclose(fp);
-  write(1, "Hello World!\n", 13);
   printf("PASS!!!\n");
 
   return 0;
