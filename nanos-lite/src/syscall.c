@@ -88,25 +88,42 @@ void do_syscall(Context *c) {
 	a[2] = c->GPR3;
 	a[3] = c->GPR4;
 
-  if ( a[0] == SYS_exit) {
-    c->GPRx = sys_exit();
-  } else if ( a[0] == SYS_yield) {
-    c->GPRx = sys_yield();
-  } else if ( a[0] == SYS_write )  {
-    /* c->GPRx = */sys_write(c);
-  } else if ( a[0] == SYS_open ) {
-    c->GPRx = sys_open(c);
-  } else if ( a[0] == SYS_read) {
-    c->GPRx = sys_read(c);
-  } else if ( a[0] == SYS_close) {
-    c->GPRx = sys_close(c);
-  } else if ( a[0] == SYS_lseek) {
-    c->GPRx = sys_lseek(c);
-  } else if ( a[0] == SYS_gettimeofday) {
-    c->GPRx = sys_gettimeofday(c);
-  } else if ( a[0] == SYS_brk) {
-    c->GPRx = sys_brk(c);
-  } else {
-    panic("Unhandled syscall ID = %d", a[0]);
+  switch(a[0]){
+    case SYS_exit:
+      c->GPRx = sys_exit();
+      break;
+    case SYS_yield:
+      c->GPRx = sys_yield();
+      break;
+    case SYS_write:
+      sys_write(c);
+      break;
+    case SYS_brk:
+      c->GPRx = sys_brk(c);
+      break;
+
+    default:
+      panic("Unhandled syscall ID = %d", a[0]);
   }
+  // if ( a[0] == SYS_exit) {
+  //   c->GPRx = sys_exit();
+  // } else if ( a[0] == SYS_yield) {
+  //   c->GPRx = sys_yield();
+  // } else if ( a[0] == SYS_write )  {
+  //   /* c->GPRx = */sys_write(c);
+  // } else if ( a[0] == SYS_open ) {
+  //   c->GPRx = sys_open(c);
+  // } else if ( a[0] == SYS_read) {
+  //   c->GPRx = sys_read(c);
+  // } else if ( a[0] == SYS_close) {
+  //   c->GPRx = sys_close(c);
+  // } else if ( a[0] == SYS_lseek) {
+  //   c->GPRx = sys_lseek(c);
+  // } else if ( a[0] == SYS_gettimeofday) {
+  //   c->GPRx = sys_gettimeofday(c);
+  // } else if ( a[0] == SYS_brk) {
+  //   c->GPRx = sys_brk(c);
+  // } else {
+  //   panic("Unhandled syscall ID = %d", a[0]);
+  // }
 }
