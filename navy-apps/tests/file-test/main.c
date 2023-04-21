@@ -3,9 +3,7 @@
 
 int main() {
   FILE *fp = fopen("/share/files/num", "r+");
-  write(1, "Hello World!\n", 13);
   assert(fp);
-  printf("Hello World from file-test!\n");
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
   assert(size == 5000);
