@@ -4,7 +4,7 @@
 int main() {
   FILE *fp = fopen("/share/files/num", "r+");
   assert(fp);
-
+  printf("Hello World from file-test!\n");
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
   assert(size == 5000);
@@ -18,7 +18,7 @@ int main() {
 
   fseek(fp, 0, SEEK_SET);
   for (i = 0; i < 500; i ++) {
-    //fprintf(fp, "%4d\n", i + 1 + 1000);
+    fprintf(fp, "%4d\n", i + 1 + 1000);
   }
 
   for (i = 500; i < 1000; i ++) {
