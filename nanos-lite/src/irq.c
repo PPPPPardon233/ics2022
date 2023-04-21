@@ -3,16 +3,19 @@
 extern void do_syscall(Context *c);
 
 static Context* do_event(Event e, Context* c) {
-  if (e.event == EVENT_YIELD ) {
-    printf("EVENT_YIELD, event ID %d\n", e.event);
+  switch (e.event) {
+    case EVENT_YIELD:
+      Log("EVENT_YIELD\n");
+      break;
+
+    case EVENT_SYSCALL:
+      do_syscall(c);
+      break;
+
+    default: panic("Unhandled event ID = %d", e.event);
   }
-  else if (e.event == EVENT_SYSCALL ) {
-    printf("EVENT_SYSCALL, do_event ID %d, count %d\n", e.event, c->GPR4); 
-    do_syscall(c);
-  }
-  else {
-    panic("PANIC event ID %d", e.event);
-  }
+
+  return c;
 
   return c;
 }
