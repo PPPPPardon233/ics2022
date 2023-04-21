@@ -50,7 +50,7 @@ int sys_gettimeofday(Context *c)
 	return 0;
 }
 
-void sys_write(Context *c){
+int sys_write(Context *c){
 	// if (c->GPR2 == 1 || c->GPR2 == 2){
   //   for (int i = 0; i < c->GPR4; ++i){
   //     putch(*(((char *)c->GPR3) + i));
@@ -58,12 +58,11 @@ void sys_write(Context *c){
   //   c->GPRx = c->GPR4;
   // }
   // else  
-    c->GPRx = fs_write(c->GPR2, (void *)c->GPR3, c->GPR4);
+  return fs_write(c->GPR2, (void *)c->GPR3, c->GPR4);
 }
 
 int sys_open(Context *c) {
-  int ret = fs_open((char *)c->GPR2, c->GPR3, c->GPR4);
-  return ret;
+  return fs_open((char *)c->GPR2, c->GPR3, c->GPR4);
 }
 
 int sys_read(Context *c){
@@ -99,22 +98,22 @@ void do_syscall(Context *c) {
       c->GPRx = sys_yield();
       break;
     case SYS_write:
-      sys_write(c);
+      c->GPRx = sys_write(c);
       break;
     case SYS_brk:
       c->GPRx = sys_brk(c);
       break;
     case SYS_open:
-      sys_open(c);
+      c->GPRx = sys_open(c);
       break;
     case SYS_close:
-      sys_close(c);
+      c->GPRx = sys_close(c);
       break;
     case SYS_read:
-      sys_read(c);
+      c->GPRx = sys_read(c);
       break;
     case SYS_lseek:
-      sys_lseek(c);
+      c->GPRx = sys_lseek(c);
       break;
     case SYS_gettimeofday:
       sys_gettimeofday(c);
