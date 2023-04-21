@@ -88,6 +88,10 @@ void do_syscall(Context *c) {
 	a[2] = c->GPR3;
 	a[3] = c->GPR4;
 
+  #ifdef CONFIG_STRACE
+    Log("EVENT_SYSCALL:%s\n",a[0]);
+  #endif
+
   switch(a[0]){
     case SYS_exit:
       c->GPRx = sys_exit();

@@ -161,6 +161,11 @@ config ETRACE
   bool "Enable error tracer"
   default y
 
+config STRACE
+  depends on TRACE
+  bool "Enable systemCall tracer"
+  default y
+
 config ITRACE_COND
   depends on ITRACE
   string "Only trace instructions when the condition is true"
