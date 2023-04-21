@@ -9,7 +9,7 @@ typedef struct {
   size_t disk_offset;
   ReadFn read;
   WriteFn write;
-  size_t prooff;
+  size_t open_offset;
 } Finfo;
 
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
@@ -36,15 +36,12 @@ void init_fs() {
   // TODO: initialize the size of /dev/fb
 }
 
-int fs_open(const char *path, int flags, int mode)
-{
+int fs_open(const char *path, int flags, int mode){
 	int k = 0;
-	for (int i = 0; i < (sizeof(file_table) / sizeof(Finfo)); i++, k++)
-	{
-		if (strcmp(path, file_table[i].name) == 0)
-		{
-			Log("fs_open file name %s", file_table[i].name);
-			file_table[i].prooff = 0;
+	for (int i = 0; i < (sizeof(file_table) / sizeof(Finfo)); i++, k++){
+		if (strcmp(path, file_table[i].name) == 0){
+			Log("fs_open file: %s", file_table[i].name);
+			file_table[i].open_offset = 0;
 			return i;
 		}
 	}
@@ -55,84 +52,69 @@ int fs_open(const char *path, int flags, int mode)
 extern size_t ramdisk_read(void *buf, size_t offset, size_t len);
 extern size_t ramdisk_write(const void *buf, size_t offset, size_t len);
 
-size_t fs_read(int fd, void *buf, size_t length)
-{
-	size_t ret = -1;
-	size_t need_to_read = 0;
-	size_t fsize = file_table[fd].size;
-	size_t prooff = file_table[fd].prooff;
+size_t fs_read(int fd, void *buf, size_t len){
+	Finfo *info = &file_table[fd];
+  size_t real_len;
 
-	if ( length > fsize - prooff ) {
-		need_to_read = fsize - prooff;
-	} 
+  if (info->read){
+    real_len = info->read(buf, info->open_offset, len);
+    info->open_offset += real_len;
+  }
   else {
-		need_to_read = length;
-	}
+    real_len = info->open_offset + len <= info->size ?
+    len : info->size - info->open_offset;
+    ramdisk_read(buf, info->disk_offset + info->open_offset, real_len);
+    info->open_offset += real_len;
+  }
 
-	if ( need_to_read <= 0 ) {
-		need_to_read = 0;
-	}
-
-
-	if (file_table[fd].read == NULL)
-	{
-		ret = ramdisk_read(buf, file_table[fd].disk_offset + file_table[fd].prooff, need_to_read);
-		file_table[fd].prooff += need_to_read;
-	}
-	else
-	{
-		return file_table[fd].read(buf, 0, length);
-	}
-
-	return ret;
+  return real_len;
 }
 
-size_t fs_write(int fd, const void *buf, size_t len)
-{
-	size_t ret = -1;
-	size_t wlength = 0;
-	size_t filesz = file_table[fd].size;
-	size_t prooff = file_table[fd].prooff;
+size_t fs_write(int fd, const void *buf, size_t len){
+	Finfo *info = &file_table[fd];
+  size_t real_len;
+  
+  if (info->write){
+    real_len = info->write(buf, info->open_offset, len);
+    info->open_offset += real_len;
+  }
+  else {
+    assert(info->open_offset + len <= info->size);
+    ramdisk_write(buf, info->disk_offset + info->open_offset, len);
+    real_len = len;
+    info->open_offset += len;
+  }
 
-	if ( len > filesz - prooff ) {
-		wlength = filesz - prooff;
-	} else {
-		wlength = len;
-	}
-
-	if ( wlength <= 0 ) wlength = 0;
-
-	size_t offset = file_table[fd].disk_offset + file_table[fd].prooff;
-	if (file_table[fd].write == NULL)
-	{
-		ret = ramdisk_write(buf, offset, wlength);
-		file_table[fd].prooff += wlength;
-	}
-	else
-	{
-		return file_table[fd].write(buf, offset, len);
-	}
-
-	return ret;
+  return real_len;
 }
 
-size_t fs_lseek(int fd, size_t offset, int whence)
-{
-	if (whence == SEEK_SET ) {
-		file_table[fd].prooff = offset;
-	} else if (whence == SEEK_CUR) {
-		file_table[fd].prooff += offset;
-	} else if ( whence == SEEK_END ) {
-		file_table[fd].prooff = file_table[fd].size + offset;
-	} else {
-		panic("Unknown whence %d", whence);
-	}
-	
-	return file_table[fd].prooff;
+size_t fs_lseek(int fd, size_t offset, int whence){
+	Finfo *info = &file_table[fd];
+
+  switch(whence){
+    case SEEK_CUR:
+      assert(info->open_offset + offset <= info->size);
+      info->open_offset += offset;
+      break;
+
+    case SEEK_SET:
+      assert(offset <= info->size);
+      info->open_offset = offset;
+      break;
+
+    case SEEK_END:
+      assert(offset <= info->size);
+      info->open_offset = info->size + offset;
+      break;
+
+    default:
+      assert(0);
+  }
+
+  return info->open_offset;
 }
 
-int fs_close(int fd)
-{
-	file_table[fd].prooff = 0;
+int fs_close(int fd){
+	file_table[fd].open_offset = 0;
 	return 0;
 }

@@ -4,6 +4,8 @@
 #include <proc.h>
 #include <sys/time.h>
 
+/*
+*To make it easier to code,here are all the SYS_interupt types
 enum {
   SYS_exit,
   SYS_yield,
@@ -26,6 +28,7 @@ enum {
   SYS_times,
   SYS_gettimeofday
 };
+*/
 
 int sys_yield(){
 	yield();
@@ -37,17 +40,6 @@ int sys_exit(){
 	return 0;
 }
 
-void sys_write(Context *c){
-	if (c->GPR2 == 1 || c->GPR2 == 2){
-    for (int i = 0; i < c->GPR4; ++i){
-      putch(*(((char *)c->GPR3) + i));
-    }
-    c->GPRx = c->GPR4;
-  }
-  else  
-    c->GPRx = fs_write(c->GPR2, (void *)c->GPR3, c->GPR4);
-}
-
 int sys_gettimeofday(Context *c)
 {
   struct timeval *tv = (struct timeval *)c->GPR2;
@@ -56,6 +48,17 @@ int sys_gettimeofday(Context *c)
   tv->tv_sec = (time / 1000000);
   c->GPRx = 0;
 	return 0;
+}
+
+void sys_write(Context *c){
+	// if (c->GPR2 == 1 || c->GPR2 == 2){
+  //   for (int i = 0; i < c->GPR4; ++i){
+  //     putch(*(((char *)c->GPR3) + i));
+  //   }
+  //   c->GPRx = c->GPR4;
+  // }
+  // else  
+    c->GPRx = fs_write(c->GPR2, (void *)c->GPR3, c->GPR4);
 }
 
 int sys_open(Context *c) {
