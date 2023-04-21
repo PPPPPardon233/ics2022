@@ -45,9 +45,9 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   * Check whether the elf-file meets the specification 
   */
 	fs_read(fd, &header, sizeof(Elf32_Ehdr));
-	if (*(uint32_t *)header.e_ident == (uint32_t)header.e_ident){
-		Log("header=%x",*(uint32_t *)header.e_ident );
-    panic("header.e_ident != 0x464c457f");
+	if (*(uint32_t *)header.e_ident == (uint32_t)0x464C457F){
+		Log("header.e_ident=%x,it should be 0x464c457f",*(uint32_t *)header.e_ident );
+    assert(0);
 	}
   
 	Elf32_Phdr pro_header[8];
