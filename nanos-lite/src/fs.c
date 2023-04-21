@@ -54,14 +54,14 @@ size_t fs_read(int fd, void *buf, size_t len){
 	Finfo *info = &file_table[fd];
   size_t real_len;
 
-  // if (info->read){
-  //   real_len = info->read(buf, info->open_offset, len);
-  // }
-  // else {
+  if (info->read){
+    real_len = info->read(buf, info->open_offset, len);
+  }
+  else {
     real_len = info->open_offset + len <= info->size ?
     len : info->size - info->open_offset;
     ramdisk_read(buf, info->disk_offset + info->open_offset, real_len);
-  //}
+  }
   info->open_offset += real_len;
   return real_len;
 }
