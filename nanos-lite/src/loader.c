@@ -40,8 +40,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 #else
   Elf32_Ehdr header;
 	int fd = fs_open(filename, 0, 0);
-	if (fd >= 3)
-		panic("fd shoud less then 3");
   /*
   * Check whether the elf-file meets the specification 
   */
