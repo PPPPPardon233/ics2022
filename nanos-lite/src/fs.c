@@ -37,16 +37,13 @@ void init_fs() {
 }
 
 int fs_open(const char *path, int flags, int mode){
-	int k = 0;
-	for (int i = 0; i < (sizeof(file_table) / sizeof(Finfo)); i++, k++){
-		if (strcmp(path, file_table[i].name) == 0){
-			Log("fs_open file: %s", file_table[i].name);
-			file_table[i].open_offset = 0;
-			return i;
-		}
-	}
-	assert(k != sizeof(file_table) / sizeof(Finfo));
-	return -1;
+	for (int i = 0; i < sizeof(file_table) / sizeof(Finfo); ++i){
+    if (strcmp(path, file_table[i].name) == 0){
+      file_table[i].open_offset = 0;
+      return i;
+    }
+  }
+  return -1;
 }
 
 extern size_t ramdisk_read(void *buf, size_t offset, size_t len);

@@ -17,13 +17,14 @@ extern size_t ramdisk_write(const void *buf, size_t offset, size_t len);
 extern size_t get_ramdisk_size();
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
+#ifdef __ONLY_DUMMY__
   /*
   * In the case of only dummy program in Ramdisk,there is
   * no need to process the pcb as well as filename parameter
   * we only need to call the funcs which are provided in the 
   * ramdisk.c file 
   */
-#ifdef __ONLY_DUMMY__
+
   Elf_Ehdr ehdr;
   ramdisk_read(&ehdr, 0, sizeof(Elf_Ehdr));
   assert((*(uint32_t *)ehdr.e_ident == 0x464c457f));
