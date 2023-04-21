@@ -5,12 +5,12 @@ extern void do_syscall(Context *c);
 static Context* do_event(Event e, Context* c) {
   switch (e.event) {
     case EVENT_YIELD:
-      Log("\nEVENT_YIELD\n");
+      Log("\nEVENT_YIELD");
       do_syscall(c);
       break;
 
     case EVENT_SYSCALL:
-      Log("\nEVENT_SYSCALL\n");
+      Log("\nEVENT_SYSCALL");
       do_syscall(c);
       break;
 
