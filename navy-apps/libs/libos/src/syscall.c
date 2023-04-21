@@ -66,14 +66,19 @@ int _write(int fd, void *buf, size_t count) {
 }
 
 extern char end;
+void * program_break = NULL;
+
 void *_sbrk(intptr_t increment) {
-  static char *myend = &end;
-  if (_syscall_(SYS_brk, increment, 0, 0) != 0) {
-    void *ret = myend;
-    myend += increment;
-    return (void*)ret;
+  if (program_break == NULL){
+    program_break = &end;
   }
-  return (void*)-1;
+  void *old_program_break = program_break;
+  int ret = _syscall_(SYS_brk, (intptr_t)(program_break + increment), 0, 0);
+  if (ret == 0)
+    program_break = program_break + increment;
+  else 
+    return (void*)-1;
+  return old_program_break;
 }
 
 
