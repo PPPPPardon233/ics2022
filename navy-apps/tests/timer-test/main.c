@@ -5,7 +5,6 @@
 #include <NDL.h>
 
 int main(){
-  printf("Hello. %d\n", sizeof(struct timeval));
   NDL_Init(0);
 
   uint32_t time;
