@@ -3,10 +3,9 @@
 
 int main() {
   write(1, "Hello World!\n", 13);
-  int i = 2;
   volatile int j = 0;
   while (j!=2) {
-    printf("Hello World from Navy-apps for the %dth time!\n", i ++);
+    printf("Hello World from Navy-apps for the first time!\n");
     j++;
   }
   FILE *fp = fopen("/share/files/num", "r+");
