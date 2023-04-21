@@ -40,13 +40,11 @@ int sys_exit(){
 	return 0;
 }
 
-int sys_gettimeofday(Context *c)
-{
+int sys_gettimeofday(Context *c){
   struct timeval *tv = (struct timeval *)c->GPR2;
   __uint64_t time = io_read(AM_TIMER_UPTIME).us;
   tv->tv_usec = (time % 1000000);
   tv->tv_sec = (time / 1000000);
-  c->GPRx = 0;
 	return 0;
 }
 
@@ -116,7 +114,7 @@ void do_syscall(Context *c) {
       c->GPRx = sys_lseek(c);
       break;
     case SYS_gettimeofday:
-      sys_gettimeofday(c);
+      c->GPRx = sys_gettimeofday(c);
       break;
     default:
       panic("Unhandled syscall ID = %d", a[0]);
