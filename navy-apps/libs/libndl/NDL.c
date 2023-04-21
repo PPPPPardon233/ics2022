@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/time.h>
 #include <assert.h>
 
@@ -13,12 +14,12 @@ static int screen_w = 0, screen_h = 0;
 uint32_t NDL_GetTicks() {
   struct timeval tv;
   gettimeofday(&tv, NULL);
-
   return tv.tv_usec / 1000 + tv.tv_sec * 1000;
 }
 
 int NDL_PollEvent(char *buf, int len) {
-  return 0;
+  int fp = open("/dev/events", O_RDONLY);
+  return read(fp, buf, sizeof(char) * len);
 }
 
 void NDL_OpenCanvas(int *w, int *h) {

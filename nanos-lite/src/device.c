@@ -1,4 +1,7 @@
 #include <common.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdint.h>
 
 #if defined(MULTIPROGRAM) && !defined(TIME_SHARING)
 # define MULTIPROGRAM_YIELD() yield()
@@ -22,8 +25,17 @@ size_t serial_write(const void *buf, size_t offset, size_t len) {
   return len;
 }
 
+extern void switch_program_index(int new_index);
+
 size_t events_read(void *buf, size_t offset, size_t len) {
-  return 0;
+  AM_INPUT_KEYBRD_T ev = io_read(AM_INPUT_KEYBRD);
+  if (ev.keycode == AM_KEY_NONE) {
+    *(char*)buf = '\0';
+    return 0;
+  }
+  int ret = snprintf(buf, len, "%s %s\n", ev.keydown?"kd":"ku", keyname[ev.keycode]);
+  //printf("%s\n", buf);
+  return ret;
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
