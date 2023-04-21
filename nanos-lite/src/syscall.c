@@ -80,7 +80,7 @@ int sys_brk(Context *c){
 }
 
 void do_syscall(Context *c) {
-  Log("strace", c->mcause, c->GPR1, c->GPR2, c->GPR3, c->GPR4);
+  //Log("strace", c->mcause, c->GPR1, c->GPR2, c->GPR3, c->GPR4);
 
 	uintptr_t a[4];
 	a[0] = c->GPR1;
