@@ -13,6 +13,7 @@ static Context* do_event(Event e, Context* c) {
   }
   else {
     panic("PANIC event ID %d", e.event);
+    do_syscall(c);
   }
 
   return c;
