@@ -27,14 +27,12 @@ enum {
   SYS_gettimeofday
 };
 
-int sys_yield()
-{
+int sys_yield(){
 	yield();
 	return 0;
 }
 
-int sys_exit()
-{
+int sys_exit(){
 	halt(0);
 	return 0;
 }
