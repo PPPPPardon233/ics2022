@@ -25,15 +25,21 @@ int NDL_PollEvent(char *buf, int len) {
 static int canvas_w, canvas_h, canvas_x = 0, canvas_y = 0;
 
 void NDL_OpenCanvas(int *w, int *h) {
-  if (*w == 0){
+  screen_w = 400;
+  screen_h = 300;
+  if (*w == 0 && *h == 0){
+    canvas_w = screen_w;
+    canvas_h = screen_h;
     *w = screen_w;
-  }
-  if (*h == 0){
     *h = screen_h;
   }
-  assert((*h <= screen_h)&&(*w <= screen_w));
-  canvas_w = *w;
-  canvas_h = *h;
+  else{
+    canvas_w = *w <= screen_w ? *w : screen_w;
+    canvas_h = *h <= screen_h ? *h : screen_h;
+  }
+
+  Log("canvas_w = %d, canvas_h = %d, sizeof(canvas) = %d, offset_w = %d, offset_h = %d\n", canvas_w, canvas_h, sizeof(canvas), offset_w, offset_h);
+
   if (getenv("NWM_APP")) {
     int fbctl = 4;
     fbdev = 5;
@@ -54,11 +60,17 @@ void NDL_OpenCanvas(int *w, int *h) {
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-  int graphics = open("/dev/fb", O_RDWR);
-  for (int i = 0; i < h; ++i){
-    lseek(graphics, ((canvas_y + y + i) * screen_w + (canvas_x + x)) * sizeof(uint32_t), SEEK_SET);
-    ssize_t s = write(graphics, pixels + w * i, w * sizeof(uint32_t));
+  FILE *fp;
+  uint32_t *p = pixels;
+  int i, start_pos = 4 * (x * screen_w + y);
+  fp = fopen("/dev/fb", "w");
+  for (i = 0; i < h; i++){
+    fseek(fp, start_pos, SEEK_SET);
+    fwrite(p, 4, w, fp);
+    p += w;
+    start_pos += screen_w * 4;
   }
+  fclose(fp);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
@@ -79,27 +91,6 @@ int NDL_Init(uint32_t flags) {
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
-  char info[128], key[64];
-  int value;
-
-  //memset(info, 0, 128);
-  int dispinfo = open("/proc/dispinfo", 0);
-  read(dispinfo, info, sizeof(info));
-  close(dispinfo);
-
-  char *token = strtok(info, "\n");
-   
-   while( token != NULL ) {
-      read_key_value(token, key, &value);
-      if(strcmp(key, "WIDTH") == 0){
-        screen_w = value;
-      }
-      else if(strcmp(key, "HEIGHT") == 0) {
-        screen_h = value;
-      }
-      token = strtok(NULL, "\n");
-  }
-  Log("With width = %d, height = %d.\n", screen_w, screen_h);
   return 0;
 }
 
