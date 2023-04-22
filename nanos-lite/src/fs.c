@@ -43,7 +43,7 @@ void init_fs() {
   // TODO: initialize the size of /dev/fb
   AM_GPU_CONFIG_T config = io_read(AM_GPU_CONFIG);
   file_table[FD_FB].size = config.width * config.height * sizeof(uint32_t);
-  Log("w=%d,h=%d",config.width,config.height);
+  // Log("w=%d,h=%d",config.width,config.height);
 }
 
 int fs_open(const char *path, int flags, int mode){
