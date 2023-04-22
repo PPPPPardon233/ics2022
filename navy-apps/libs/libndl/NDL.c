@@ -31,7 +31,7 @@ void NDL_OpenCanvas(int *w, int *h) {
   if (*h == 0){
     *h = screen_h;
   }
-  assert(!(*h <= screen_h)||(*w <= screen_w));
+  assert((*h <= screen_h)&&(*w <= screen_w));
   canvas_w = *w;
   canvas_h = *h;
   if (getenv("NWM_APP")) {
