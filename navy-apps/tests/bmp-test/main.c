@@ -13,6 +13,7 @@ int main() {
   NDL_OpenCanvas(&w, &h);
   printf("NDL_DrawRect...\n");
   NDL_DrawRect(bmp, 0, 0, w, h);
+  printf("NDL_DrawRect...\n");
   free(bmp);
   NDL_Quit();
   printf("Test ends! Spinning...\n");

@@ -61,17 +61,11 @@ void NDL_OpenCanvas(int *w, int *h) {
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-  // int graphics = open("/dev/fb", O_RDWR);
-  // for (int i = 0; i < h; ++i){
-  //   lseek(graphics, ((canvas_y + y + i) * screen_w + (canvas_x + x)) * sizeof(uint32_t), SEEK_SET);
-  //   ssize_t s = write(graphics, pixels + w * i, w * sizeof(uint32_t));
-  // }
-  FILE *graphics = fopen("/dev/fb", "w");
+  int graphics = open("/dev/fb", O_RDWR);
   for (int i = 0; i < h; ++i){
-    fseek(graphics, ((canvas_y + y + i) * screen_w + (canvas_x + x)) * sizeof(uint32_t), SEEK_SET);
-    fwrite(pixels + w * i, w * sizeof(uint32_t), 1, graphics);
+    lseek(graphics, ((canvas_y + y + i) * screen_w + (canvas_x + x)) * sizeof(uint32_t), SEEK_SET);
+    ssize_t s = write(graphics, pixels + w * i, w * sizeof(uint32_t));
   }
-  fclose(graphics);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
