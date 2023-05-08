@@ -40,20 +40,38 @@ size_t events_read(void *buf, size_t offset, size_t len) {
   return ret;
 }
 
+static char *__itoa(int num, char *buff){
+  char tmp[32];
+  if (num == 0){
+    strcat(buff, "0");
+    return buff;
+  }
+
+  uint8_t i = 0;
+  while (num != 0){
+    tmp[i] = num % 10 + '0';
+    num /= 10;
+    i++;
+  }
+
+  for (int j = i - 1; j >= 0; --j)
+    buff[i - 1 - j] = tmp[j];
+  buff[i] = '\0';
+
+  return buff;
+}
+
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  if (offset > 0){
-    return 0;
-  }
+  int width = gpu_config.width, height = gpu_config.height;
 
-  int w = io_read(AM_GPU_CONFIG).width;
-  int h = io_read(AM_GPU_CONFIG).height;
+  char num_buf[32];
 
-  int ret = snprintf(buf, len, "WIDTH:%d\nHEIGHT:%d", w, h);
-  //Log("%s", (char *)buf);
-  if (ret >= len){
-    assert(0);
-  }
-  return ret + 1;
+  strcpy(buf, "WIDTH:");
+  strcat(buf, __itoa(width, num_buf));
+  strcat(buf, "\nHEIGHT:");
+  strcat(buf, __itoa(height, num_buf));
+  strcat(buf, "\n");
+  return strlen((char *)buf);
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
