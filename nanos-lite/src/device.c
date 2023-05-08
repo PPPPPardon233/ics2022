@@ -12,6 +12,9 @@
 #define NAME(key) \
   [AM_KEY_##key] = #key,
 
+static AM_GPU_CONFIG_T gpu_config;
+static AM_GPU_FBDRAW_T gpu_fbdraw;
+
 static const char *keyname[256] __attribute__((used)) = {
   [AM_KEY_NONE] = "NONE",
   AM_KEYS(NAME)
@@ -54,14 +57,27 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
-  uint32_t w = io_read(AM_GPU_CONFIG).width;
-	uint32_t h = io_read(AM_GPU_CONFIG).height;
-	uint32_t x = (offset / 4) % w; 
-	uint32_t y = (offset / 4) / w;
-	if (offset + len > w * h * 4)
-		len = w * h * 4 - offset;
-	io_write(AM_GPU_FBDRAW, x, y, (uint32_t *)buf, len / 4, 1, true);
-	return len;
+  if (len == 0){
+    // printf("end!\n");
+    gpu_fbdraw.sync = 1;
+    gpu_fbdraw.w = 0;
+    gpu_fbdraw.h = 0;
+    ioe_write(AM_GPU_FBDRAW, &gpu_fbdraw);
+    return 0;
+  }
+
+  int width = gpu_config.width;
+  // printf("screen is %d\n", width);
+
+  gpu_fbdraw.pixels = (void *)buf;
+  gpu_fbdraw.w = len;
+  gpu_fbdraw.h = 1;
+  gpu_fbdraw.x = offset % width;
+  gpu_fbdraw.y = offset / width;
+  // printf("w,h is %d,%d\n",gpu_fbdraw.w,gpu_fbdraw.h);
+  gpu_fbdraw.sync = 0;
+  ioe_write(AM_GPU_FBDRAW, &gpu_fbdraw);
+  return len;
 }
 
 void init_device() {
