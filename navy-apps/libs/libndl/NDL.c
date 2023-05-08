@@ -9,15 +9,7 @@
 
 static int evtdev = -1;
 static int fbdev = -1;
-static int dispinfo_dev = -1;
 static int screen_w = 0, screen_h = 0;
-
-typedef struct size
-{
-  int w;
-  int h;
-} Size;
-Size disp_size;
 
 uint32_t NDL_GetTicks() {
   struct timeval tv;
@@ -34,10 +26,20 @@ static int canvas_w, canvas_h, canvas_x = 0, canvas_y = 0;
 
 void NDL_OpenCanvas(int *w, int *h) {
 
-  if (*w == 0 && *h == 0){
-    *w = disp_size.w;
-    *h = disp_size.h;
+  if (*w == 0){
+    *w = screen_w;
   }
+  else if(*w > screen_w){
+    assert(0);
+  }
+  if (*h == 0){
+    *h = screen_h;
+  }
+  else if(*h > screen_h){
+    assert(0);
+  }
+  canvas_w = *w;
+  canvas_h = *h;
 
   if (getenv("NWM_APP")) {
     int fbctl = 4;
@@ -80,21 +82,11 @@ int NDL_QueryAudio() {
   return 0;
 }
 
+
 int NDL_Init(uint32_t flags) {
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
-  evtdev = open("/dev/events", 0, 0);
-  fbdev = open("/dev/fb", 0, 0);
-  dispinfo_dev = open("/proc/dispinfo", 0, 0);
-
-  // get_disp_size();
-  FILE *fp = fopen("/proc/dispinfo", "r");
-  fscanf(fp, "WIDTH:%d\nHEIGHT:%d\n", &disp_size.w, &disp_size.h);
-  // printf("disp size is %d,%d\n", disp_size.w, disp_size.h);
-  assert(disp_size.w >= 400 && disp_size.w <= 800);
-  assert(disp_size.h >= 300 && disp_size.h <= 640);
-  fclose(fp);
   return 0;
 }
 
