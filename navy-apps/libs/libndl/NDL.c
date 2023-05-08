@@ -111,7 +111,7 @@ int NDL_Init(uint32_t flags) {
     if(strcmp(key, "WIDTH") == 0){
       screen_w = value;
     }
-    else if(strcmp(key, "HEIGHT") == 0) {
+    if(strcmp(key, "HEIGHT") == 0) {
       screen_h = value;
     }
     token = strtok(NULL, "\n");
