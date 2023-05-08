@@ -25,8 +25,7 @@ int NDL_PollEvent(char *buf, int len) {
 static int canvas_w, canvas_h, canvas_x = 0, canvas_y = 0;
 
 void NDL_OpenCanvas(int *w, int *h) {
-  screen_w = 400;
-  screen_h = 300;
+
   if (*w == 0){
     *w = screen_w;
   }
@@ -62,11 +61,17 @@ void NDL_OpenCanvas(int *w, int *h) {
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-  int graphics = open("/dev/fb", O_RDWR);
+  // int graphics = open("/dev/fb", O_RDWR);
+  // for (int i = 0; i < h; ++i){
+  //   lseek(graphics, ((canvas_y + y + i) * screen_w + (canvas_x + x)) * sizeof(uint32_t), SEEK_SET);
+  //   ssize_t s = write(graphics, pixels + w * i, w * sizeof(uint32_t));
+  // }
+  FILE *graphics = fopen("/dev/fb", "w");
   for (int i = 0; i < h; ++i){
-    lseek(graphics, ((canvas_y + y + i) * screen_w + (canvas_x + x)) * sizeof(uint32_t), SEEK_SET);
-    ssize_t s = write(graphics, pixels + w * i, w * sizeof(uint32_t));
+    fseek(graphics, ((canvas_y + y + i) * screen_w + (canvas_x + x)) * sizeof(uint32_t), SEEK_SET);
+    fwrite(pixels + w * i, w * sizeof(uint32_t), 1, graphics);
   }
+  fclose(graphics);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
