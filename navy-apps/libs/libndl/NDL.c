@@ -11,6 +11,13 @@ static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 
+typedef struct size
+{
+  int w;
+  int h;
+} Size;
+Size disp_size;
+
 uint32_t NDL_GetTicks() {
   struct timeval tv;
   gettimeofday(&tv, NULL);
@@ -26,20 +33,10 @@ static int canvas_w, canvas_h, canvas_x = 0, canvas_y = 0;
 
 void NDL_OpenCanvas(int *w, int *h) {
 
-  if (*w == 0){
-    *w = screen_w;
+  if (*w == 0 && *h == 0){
+    *w = disp_size.w;
+    *h = disp_size.h;
   }
-  else if(*w > screen_w){
-    assert(0);
-  }
-  if (*h == 0){
-    *h = screen_h;
-  }
-  else if(*h > screen_h){
-    assert(0);
-  }
-  canvas_w = *w;
-  canvas_h = *h;
 
   if (getenv("NWM_APP")) {
     int fbctl = 4;
