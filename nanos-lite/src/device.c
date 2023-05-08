@@ -46,7 +46,7 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
   int h = io_read(AM_GPU_CONFIG).height;
 
   int ret = snprintf(buf, len, "WIDTH:%d HEIGHT:%d\n", w, h);
-  Log("%s", (char *)buf);
+  //Log("%s", (char *)buf);
   if (ret >= len){
     assert(0);
   }
