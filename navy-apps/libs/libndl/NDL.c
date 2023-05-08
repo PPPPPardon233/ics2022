@@ -58,11 +58,23 @@ void NDL_OpenCanvas(int *w, int *h) {
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-  int graphics = open("/dev/fb", O_RDWR);
-  for (int i = 0; i < h; ++i){
-    lseek(graphics, ((canvas_y + y + i) * screen_w + (canvas_x + x)) * sizeof(uint32_t), SEEK_SET);
-    ssize_t s = write(graphics, pixels + w * i, w * sizeof(uint32_t));
+  if (w == 0 && h == 0){
+    w = disp_size.w;
+    h = disp_size.h;
   }
+  assert(w > 0 && w <= disp_size.w);
+  assert(h > 0 && h <= disp_size.h);
+
+  // write(1, "here\n", 10);
+  // printf("draw [%d, %d] to [%d, %d]\n", w, h, x, y);
+  for (size_t row = 0; row < h; ++row){
+    // printf("draw row %d with len %d\n", row, w);
+    lseek(fbdev, x + (y + row) * disp_size.w, SEEK_SET);
+    // printf("pixels pos %p with len %d\n",pixels + row * w, w);
+    write(fbdev, pixels + row * w, w);
+    // printf("draw row %d with len %d\n", row, w);
+  }
+  write(fbdev, 0, 0);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
