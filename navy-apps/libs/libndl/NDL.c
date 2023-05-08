@@ -9,15 +9,7 @@
 
 static int evtdev = -1;
 static int fbdev = -1;
-static int dispinfo_dev = -1;
 static int screen_w = 0, screen_h = 0;
-
-typedef struct size
-{
-  int w;
-  int h;
-} Size;
-Size disp_size;
 
 uint32_t NDL_GetTicks() {
   struct timeval tv;
@@ -34,10 +26,20 @@ static int canvas_w, canvas_h, canvas_x = 0, canvas_y = 0;
 
 void NDL_OpenCanvas(int *w, int *h) {
 
-  if (*w == 0 && *h == 0){
-    *w = disp_size.w;
-    *h = disp_size.h;
+  if (*w == 0){
+    *w = screen_w;
   }
+  else if(*w > screen_w){
+    assert(0);
+  }
+  if (*h == 0){
+    *h = screen_h;
+  }
+  else if(*h > screen_h){
+    assert(0);
+  }
+  canvas_w = *w;
+  canvas_h = *h;
 
   if (getenv("NWM_APP")) {
     int fbctl = 4;
@@ -59,17 +61,11 @@ void NDL_OpenCanvas(int *w, int *h) {
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
-  if (w == 0 && h == 0){
-    w = disp_size.w;
-    h = disp_size.h;
+  int graphics = open("/dev/fb", O_RDWR);
+  for (int i = 0; i < h; ++i){
+    lseek(graphics, ((canvas_y + y + i) * screen_w + (canvas_x + x)) * sizeof(uint32_t), SEEK_SET);
+    ssize_t s = write(graphics, pixels + w * i, w * sizeof(uint32_t));
   }
-  assert(w > 0 && w <= disp_size.w);
-  assert(h > 0 && h <= disp_size.h);
-  for (size_t row = 0; row < h; ++row){
-    lseek(fbdev, x + (y + row) * disp_size.w, SEEK_SET);
-    write(fbdev, pixels + row * w, w);
-  }
-  write(fbdev, 0, 0);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
@@ -86,23 +82,43 @@ int NDL_QueryAudio() {
   return 0;
 }
 
+static void read_key_value(char *str, char *key, int* value){
+  char buffer[128];
+  int len = 0;
+  for (char* c = str; *c; ++c){
+    if(*c != ' '){
+      buffer[len++] = *c;
+    }
+  }
+  buffer[len] = '\0';
+  sscanf(buffer, "%[a-zA-Z]:%d", key, value);
+}
 
 int NDL_Init(uint32_t flags) {
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
-  evtdev = open("/dev/events", 0, 0);
-  fbdev = open("/dev/fb", 0, 0);
-  dispinfo_dev = open("/proc/dispinfo", 0, 0);
+  // char info[128], key[64];
+  // int value;
 
-  // get_disp_size();
-  FILE *fp = fopen("/proc/dispinfo", "r");
-  disp_size.w=400;disp_size.h=300;
-  //fscanf(fp, "WIDTH:%d\nHEIGHT:%d\n", &disp_size.w, &disp_size.h);
-  printf("disp size is %d,%d\n", disp_size.w, disp_size.h);
-  assert(disp_size.w >= 400 && disp_size.w <= 800);
-  assert(disp_size.h >= 300 && disp_size.h <= 640);
-  fclose(fp);
+  // int dispinfo = open("/proc/dispinfo", 0);
+  // read(dispinfo, info, sizeof(info));
+  // close(dispinfo);
+  // char *token = strtok(info, "\n");
+  // while( token != NULL ) {
+  //   read_key_value(token, key, &value);
+
+  //   if(strcmp(key, "WIDTH") == 0){
+  //     screen_w = value;
+  //   }
+  //   if(strcmp(key, "HEIGHT") == 0) {
+  //     screen_h = value;
+  //   }
+  //   token = strtok(NULL, "\n");
+  // }
+
+  // printf("With width = %d, height = %d.\n", screen_w, screen_h);
+
   return 0;
 }
 
