@@ -98,26 +98,26 @@ int NDL_Init(uint32_t flags) {
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
-  char info[128], key[64];
-  int value;
+  // char info[128], key[64];
+  // int value;
 
-  int dispinfo = open("/proc/dispinfo", 0);
-  read(dispinfo, info, sizeof(info));
-  close(dispinfo);
-  char *token = strtok(info, "\n");
-  while( token != NULL ) {
-    read_key_value(token, key, &value);
+  // int dispinfo = open("/proc/dispinfo", 0);
+  // read(dispinfo, info, sizeof(info));
+  // close(dispinfo);
+  // char *token = strtok(info, "\n");
+  // while( token != NULL ) {
+  //   read_key_value(token, key, &value);
 
-    if(strcmp(key, "WIDTH") == 0){
-      screen_w = value;
-    }
-    if(strcmp(key, "HEIGHT") == 0) {
-      screen_h = value;
-    }
-    token = strtok(NULL, "\n");
-  }
+  //   if(strcmp(key, "WIDTH") == 0){
+  //     screen_w = value;
+  //   }
+  //   if(strcmp(key, "HEIGHT") == 0) {
+  //     screen_h = value;
+  //   }
+  //   token = strtok(NULL, "\n");
+  // }
 
-  printf("With width = %d, height = %d.\n", screen_w, screen_h);
+  // printf("With width = %d, height = %d.\n", screen_w, screen_h);
 
   return 0;
 }
