@@ -9,6 +9,7 @@
 
 static int evtdev = -1;
 static int fbdev = -1;
+static int dispinfo_dev = -1;
 static int screen_w = 0, screen_h = 0;
 
 typedef struct size
@@ -64,15 +65,9 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   }
   assert(w > 0 && w <= disp_size.w);
   assert(h > 0 && h <= disp_size.h);
-
-  // write(1, "here\n", 10);
-  // printf("draw [%d, %d] to [%d, %d]\n", w, h, x, y);
   for (size_t row = 0; row < h; ++row){
-    // printf("draw row %d with len %d\n", row, w);
     lseek(fbdev, x + (y + row) * disp_size.w, SEEK_SET);
-    // printf("pixels pos %p with len %d\n",pixels + row * w, w);
     write(fbdev, pixels + row * w, w);
-    // printf("draw row %d with len %d\n", row, w);
   }
   write(fbdev, 0, 0);
 }
@@ -96,6 +91,17 @@ int NDL_Init(uint32_t flags) {
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
+  evtdev = open("/dev/events", 0, 0);
+  fbdev = open("/dev/fb", 0, 0);
+  dispinfo_dev = open("/proc/dispinfo", 0, 0);
+
+  // get_disp_size();
+  FILE *fp = fopen("/proc/dispinfo", "r");
+  fscanf(fp, "WIDTH:%d\nHEIGHT:%d\n", &disp_size.w, &disp_size.h);
+  // printf("disp size is %d,%d\n", disp_size.w, disp_size.h);
+  assert(disp_size.w >= 400 && disp_size.w <= 800);
+  assert(disp_size.h >= 300 && disp_size.h <= 640);
+  fclose(fp);
   return 0;
 }
 
