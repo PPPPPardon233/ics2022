@@ -5,9 +5,9 @@ extern void do_syscall(Context *c);
 static Context* do_event(Event e, Context* c) {
   switch (e.event) {
     case EVENT_YIELD:
-      //#ifdef CONFIG_STRACE
+      #ifdef CONFIG_STRACE
         Log("\nEVENT_YIELD");
-      //#endif
+      #endif
       break;
 
     case EVENT_SYSCALL:
