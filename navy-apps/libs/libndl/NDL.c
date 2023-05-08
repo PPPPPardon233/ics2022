@@ -10,6 +10,9 @@
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
+static int canvas_w = 0, canvas_h = 0;
+static int offset_w = 0, offset_h = 0;
+static uint32_t* canvas =NULL;
 
 uint32_t NDL_GetTicks() {
   struct timeval tv;
@@ -25,21 +28,22 @@ int NDL_PollEvent(char *buf, int len) {
 static int canvas_w, canvas_h, canvas_x = 0, canvas_y = 0;
 
 void NDL_OpenCanvas(int *w, int *h) {
-
-  if (*w == 0){
-    *w = screen_w;
-  }
-  else if(*w > screen_w){
-    assert(0);
-  }
-  if (*h == 0){
-    *h = screen_h;
-  }
-  else if(*h > screen_h){
-    assert(0);
-  }
-  canvas_w = *w;
-  canvas_h = *h;
+  FILE* fp = fopen("/proc/dispinfo", "r");
+	fscanf(fp, "WIDTH : %d\nHEIGHT:%d", &screen_w, &screen_h);
+	if(*w == 0&&*h == 0){
+    		canvas_w = screen_w;
+    		canvas_h = screen_h;
+    		*w = screen_w;
+    		*h = screen_h;
+  	}
+  	else {
+		canvas_w = *w<=screen_w? *w:screen_w;		
+		canvas_h = *h<=screen_h? *h:screen_h;
+	}
+	canvas = (uint32_t*)malloc(sizeof(uint32_t)*(*w)*(*h));
+	memset(canvas , 0, sizeof(canvas));
+	offset_w = (screen_w - canvas_w)/2;
+	offset_h = (screen_h - canvas_h)/2;//居中
 
   if (getenv("NWM_APP")) {
     int fbctl = 4;
