@@ -82,43 +82,10 @@ int NDL_QueryAudio() {
   return 0;
 }
 
-static void read_key_value(char *str, char *key, int* value){
-  char buffer[128];
-  int len = 0;
-  for (char* c = str; *c; ++c){
-    if(*c != ' '){
-      buffer[len++] = *c;
-    }
-  }
-  buffer[len] = '\0';
-  sscanf(buffer, "%[a-zA-Z]:%d", key, value);
-}
-
 int NDL_Init(uint32_t flags) {
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
-  // char info[128], key[64];
-  // int value;
-
-  // int dispinfo = open("/proc/dispinfo", 0);
-  // read(dispinfo, info, sizeof(info));
-  // close(dispinfo);
-  // char *token = strtok(info, "\n");
-  // while( token != NULL ) {
-  //   read_key_value(token, key, &value);
-
-  //   if(strcmp(key, "WIDTH") == 0){
-  //     screen_w = value;
-  //   }
-  //   if(strcmp(key, "HEIGHT") == 0) {
-  //     screen_h = value;
-  //   }
-  //   token = strtok(NULL, "\n");
-  // }
-
-  // printf("With width = %d, height = %d.\n", screen_w, screen_h);
-
   return 0;
 }
 
