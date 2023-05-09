@@ -33,8 +33,9 @@ void init_proc() {
   //naive_uload(NULL, "/bin/bmp-test");
   //naive_uload(NULL, "/bin/nslider");
   //naive_uload(NULL, "/bin/menu");
-  naive_uload(NULL, "/bin/nterm");
+  //naive_uload(NULL, "/bin/nterm");
   //naive_uload(NULL, "/bin/bird");
+  naive_uload(NULL, "/bin/pal");
 }
 
 Context* schedule(Context *prev) {
