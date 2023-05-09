@@ -71,16 +71,13 @@ static int inline read_keyinfo(uint8_t *type, uint8_t *sym){
   for (i = 0; key_buf[i] != ' '; i++){}
   key_buf[i] = '\0';
   key_key = &key_buf[i + 1]; 
+  printf("%s",key_key);
   for (i = 0;  key_key[i] != '\0' && key_key[i] != '\n'; i++){}
   if (key_key[i] == '\n'){
     key_key[i] = '\0';
   }
-  if (key_action[1] == '↓'){
-    *type = SDL_KEYDOWN;
-  }
-  else{
-    *type = SDL_KEYUP;
-  }
+  if (key_action[1] == '↓')   *type = SDL_KEYDOWN;
+  else                        *type = SDL_KEYUP;
 
   for (i = 0; i < sizeof(keyname) / sizeof(char *); ++i){
     if (key_key[0] == keyname[i][0] && strcmp(key_key, keyname[i]) == 0){
