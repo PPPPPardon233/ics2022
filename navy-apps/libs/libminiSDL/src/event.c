@@ -141,6 +141,9 @@ int SDL_WaitEvent(SDL_Event *event) {
       key_state[sym] = 0;
       break;
   }
+  #ifdef _DEBUG_
+  printf("catch event\n");
+  #endif
   return 1;
 }
 
