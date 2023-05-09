@@ -11,41 +11,6 @@ static const char *keyname[] = {
   _KEYS(keyname)
 };
 
-struct __event_element{
-  uint8_t type;
-  uint8_t sym;
-  struct __event_element* next;
-};
-typedef struct __event_element event_element;
-
-static event_element event_queue = {.type = 0, .sym = 0, .next = NULL};
-static event_element *end = &event_queue;
-
-static void append(uint8_t type, uint8_t sym){
-  event_element *new_element = malloc(sizeof(event_element));
-  new_element->type = type;
-  new_element->sym = sym;
-  new_element->next = NULL;
-  end->next = new_element;
-  end = new_element;
-}
-
-static int pop(uint8_t *type, uint8_t *sym){
-  if (event_queue.next == NULL){
-    return 0;
-  }else {
-    event_element *buf = event_queue.next;
-    *type = buf->type;
-    *sym = buf->sym;
-    event_queue.next = buf->next;
-    if (buf == end){
-      end = &event_queue;
-    }
-    free (buf);
-  }
-  return 1;
-}
-
 static uint8_t key_state[sizeof(keyname) / sizeof(keyname[0])] = {0};
 
 
