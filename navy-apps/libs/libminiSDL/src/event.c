@@ -86,7 +86,7 @@ static int inline read_keyinfo(uint8_t *type, uint8_t *sym){
   }
 
   //deal with paramaters
-  if (key_action[1] == '↓')   *type = SDL_KEYDOWN;
+  if (key_action[1] == 'd')   *type = SDL_KEYDOWN;
   else                        *type = SDL_KEYUP;
 
   for (i = 0; i < sizeof(keyname) / sizeof(char *); ++i){

@@ -33,7 +33,7 @@ size_t events_read(void *buf, size_t offset, size_t len) {
     *(char*)buf = '\0';
     return 0;
   }
-  int ret = snprintf(buf, len, "%s %s\n", ev.keydown?"k↓":"k↑", keyname[ev.keycode]);
+  int ret = snprintf(buf, len, "%s %s\n", ev.keydown?"kd":"ku", keyname[ev.keycode]);
   return ret;
 }
 
