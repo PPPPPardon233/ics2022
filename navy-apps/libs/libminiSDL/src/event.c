@@ -44,20 +44,33 @@ int SDL_PollEvent(SDL_Event *ev) {
 
 int SDL_WaitEvent(SDL_Event *event) {
   #define BUF_LEN 16
+  #define _DEBUG_
   char buf[BUF_LEN];
   memset(buf,0,BUF_LEN);
   
   while(NDL_PollEvent(buf, BUF_LEN) == 0){};
+  #ifdef _DEBUG_ 
   printf("event is %s in SDL\n", buf);
-  if(strncmp(buf, "k↓", 2) == 0 ) event->type = SDL_KEYDOWN;
-  else if(strncmp(buf, "k↑", 2) == 0) event->type = SDL_KEYUP;
+  #endif
+  if(strncmp(buf, "k↓", 2) == 0 ) {
+    event->type = SDL_KEYDOWN;
+    #ifdef _DEBUG_ 
+    printf("k↓");
+    #endif
+  }
+  else if(strncmp(buf, "k↑", 2) == 0) {
+    event->type = SDL_KEYUP;
+    #ifdef _DEBUG_ 
+    printf("k↑");
+    #endif
+  }
 
   for(size_t i = 0; i < NR_KEYS; ++i){
-    if(    ((strlen(buf + 3) - 1) == strlen(keyname[i]))  \
-        && (strncmp(buf + 3, keyname[i], strlen(keyname[i])) == 0) ) 
-      {event->key.keysym.sym = i; 
-       keysnap[i] = (event->type == SDL_KEYDOWN)? 1: 0;
-       break; 
+    if(   ((strlen(buf + 3) - 1) == strlen(keyname[i]))  \
+        && (strncmp(buf + 3, keyname[i], strlen(keyname[i])) == 0) ) {
+        event->key.keysym.sym = i; 
+        keysnap[i] = (event->type == SDL_KEYDOWN)? 1: 0;
+        break; 
       }
   }
   
