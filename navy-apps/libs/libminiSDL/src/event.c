@@ -63,28 +63,38 @@ static int inline read_keyinfo(uint8_t *type, uint8_t *sym){
   if (!ret){
     return 0;
   }
+
   #ifdef _DEBUG_
   printf("%s\n", key_buf);
   #endif
+  //deal with key_action
   key_action = key_buf;
   int i;
   for (i = 0; key_buf[i] != ' '; i++){}
   key_buf[i] = '\0';
+
+  //deal with key_key
   key_key = &key_buf[i + 1]; 
+
+  #ifdef _DEBUG_
   printf("%s",key_key);
+  #endif
+
   for (i = 0;  key_key[i] != '\0' && key_key[i] != '\n'; i++){}
   if (key_key[i] == '\n'){
     key_key[i] = '\0';
   }
+
+  //deal with paramaters
   if (key_action[1] == '↓')   *type = SDL_KEYDOWN;
   else                        *type = SDL_KEYUP;
 
   for (i = 0; i < sizeof(keyname) / sizeof(char *); ++i){
     if (key_key[0] == keyname[i][0] && strcmp(key_key, keyname[i]) == 0){
       *sym = i;
-      return ret;
     }
   }
+  return ret;
 }
 
 int SDL_PollEvent(SDL_Event *ev) {
