@@ -7,9 +7,53 @@
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+  uint32_t s_start_pos = 0;
+  uint32_t s_sf_row_num = src->h, s_sf_col_num = src->w,
+           s_rec_row_num = src->h, s_rec_col_num = src->w;
+  if (srcrect != NULL){
+    s_start_pos = srcrect->x + srcrect->y * src->w;
+    s_rec_row_num = srcrect->h;
+    s_rec_col_num = srcrect->w;
+  }
+  uint32_t d_start_pos = 0;
+  uint32_t d_sf_row_num = dst->h, d_sf_col_num = dst->w;
+  if (dstrect != NULL){
+    d_start_pos = dstrect->x + dstrect->y * dst->w;
+  }
+  if (dst->format->BitsPerPixel == 32){
+    for (int row = 0; row < s_rec_row_num; ++row)
+      memcpy((uint32_t *)dst->pixels + d_start_pos + row * d_sf_col_num, (uint32_t *)src->pixels + s_start_pos + row * s_sf_col_num, s_rec_col_num * sizeof(uint32_t));
+  }
+  else if (dst->format->BitsPerPixel == 8){
+    for (int row = 0; row < s_rec_row_num; ++row)
+      memcpy((uint8_t *)dst->pixels + d_start_pos + row * d_sf_col_num, (uint8_t *)src->pixels + s_start_pos + row * s_sf_col_num, s_rec_col_num * sizeof(uint8_t));
+  }
+  else
+    assert(0);
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
+  int32_t start_pos = 0;
+  uint32_t sf_row_num = dst->h;
+  uint32_t sf_col_num = dst->w;
+  uint32_t rec_row_num = dst->h;
+  uint32_t rec_col_num = dst->w;
+  if (dstrect != NULL){
+    start_pos = dstrect->x + dstrect->y * dst->w;
+    rec_row_num = dstrect->h;
+    rec_col_num = dstrect->w;
+  }
+  if (dst->format->BitsPerPixel == 32){
+    for (int row = 0; row < rec_row_num; ++row)
+      memset((uint32_t *)dst->pixels + start_pos + row * sf_col_num, color, rec_col_num * sizeof(uint32_t));
+  }
+  else if (dst->format->BitsPerPixel == 8){
+    for (int row = 0; row < rec_row_num; ++row)
+      memset((uint8_t *)dst->pixels + start_pos + row * sf_col_num, color, rec_col_num * sizeof(uint8_t));
+  }
+  else
+    assert(0);
+  return;
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h){
