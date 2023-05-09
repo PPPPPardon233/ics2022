@@ -140,7 +140,7 @@ static int cmd_save(char *args){
   //printf("%s\n",filename);
   FILE* fp = fopen(filename, "w");
   int ret = save_regs(fp);
-  ret = save_mem(fp);
+  //ret = save_mem(fp);
   printf("snapshot saved!\n");
   return ret;
 }
