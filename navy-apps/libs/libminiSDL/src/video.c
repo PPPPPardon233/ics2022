@@ -193,7 +193,7 @@ void SDL_SoftStretch(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
     SDL_BlitSurface(src, &rect, dst, dstrect);
   }
   else {
-    //assert(0);
+    assert(0);
     printf("src size is %d, %d\n", src->w, src->h);
     printf("dst size is %d, %d\n", dst->w, dst->h);
     int w_ratio = dstrect->w/w, h_ratio = dstrect->h/h;
