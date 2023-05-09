@@ -125,6 +125,45 @@ static int cmd_d(char *args){
   return 0;
 }
 
+extern int save_mem(FILE *fp);
+extern int save_regs(FILE* fp);
+#define FILENAME_LEN 128
+static int cmd_save(char *args){
+  if(args == NULL) return 0;
+  char *history_name = strtok(NULL, " ");
+
+  char *home_path = getenv("NEMU_HOME");
+  char filename[FILENAME_LEN];
+  strcpy(filename, home_path);
+  strcat(filename, "/src/monitor/nemu_history/");
+  strcat(filename, history_name);
+
+  FILE* fp = fopen(filename, "w");
+  int ret = save_regs(fp);
+  ret = save_mem(fp);
+  
+  return ret;
+}
+
+extern int load_mem(FILE *fp);
+extern int load_regs(FILE* fp);
+static int cmd_load(char *args){
+  if(args == NULL) return 0;
+  char *history_name = strtok(NULL, " ");
+
+  char *home_path = getenv("NEMU_HOME");
+  char filename[FILENAME_LEN];
+  strcpy(filename, home_path);
+  strcat(filename, "/src/monitor/nemu_history/");
+  strcat(filename, history_name);
+
+  FILE* fp = fopen(filename, "r");
+  int ret = load_regs(fp);
+  ret = load_mem(fp);
+  
+  return ret;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -139,8 +178,8 @@ static struct {
   { "p", "Evaluate the expression EXPR", cmd_p},
   { "w", "Suspend program execution when the value of the expression EXPR changes", cmd_w},
   { "d", "delete the watchpoint with sequence number n", cmd_d},
-  //{ "save", "save the snapshot of nemu", cmd_save},
-  //{ "load", "load the snapshot of nemu", cmd_load},
+  { "save", "save the snapshot of nemu", cmd_save},
+  { "load", "load the snapshot of nemu", cmd_load},
 };
 
 #define NR_CMD ARRLEN(cmd_table)

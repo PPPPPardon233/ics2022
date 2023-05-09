@@ -49,3 +49,13 @@ word_t isa_reg_str2val(const char *s, bool *success) {
   }
   return 0;
 }
+
+int save_regs(FILE* fp){
+  if(fwrite(&cpu, 1, sizeof(cpu), fp) == 0) panic("Fail to save regs in cpu\n");
+  return 0;
+}
+
+int load_regs(FILE* fp){
+  if(fread(&cpu, 1, sizeof(cpu), fp) == 0) panic("Fail to load regs in cpu\n");
+  return 0;
+}

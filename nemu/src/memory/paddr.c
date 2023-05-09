@@ -74,3 +74,15 @@ void paddr_write(paddr_t addr, int len, word_t data) {
   IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
   out_of_bound(addr);
 }
+
+int save_mem(FILE *fp){
+  if (fwrite(pmem, 1, sizeof(pmem), fp) == 0)
+    panic("Fail to save memory");
+  return 0;
+}
+
+int load_mem(FILE *fp){
+  if (fread(pmem, 1, sizeof(pmem), fp) == 0)
+    panic("Fail to save memory");
+  return 0;
+}
