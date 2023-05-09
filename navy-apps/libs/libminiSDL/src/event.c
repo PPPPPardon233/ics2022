@@ -58,7 +58,7 @@ int SDL_WaitEvent(SDL_Event *event) {
     printf("k↓");
     #endif
   }
-  else if(strncmp(buf, "k↑", 2) == 0) {
+  if(strncmp(buf, "k↑", 2) == 0) {
     event->type = SDL_KEYUP;
     #ifdef _DEBUG_ 
     printf("k↑");
