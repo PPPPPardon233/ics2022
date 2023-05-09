@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
@@ -192,7 +193,17 @@ void SDL_SoftStretch(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
     SDL_BlitSurface(src, &rect, dst, dstrect);
   }
   else {
-    assert(0);
+    //assert(0);
+    printf("src size is %d, %d\n", src->w, src->h);
+    printf("dst size is %d, %d\n", dst->w, dst->h);
+    int w_ratio = dstrect->w/w, h_ratio = dstrect->h/h;
+    printf("ratio is %d, %d\n", w_ratio,h_ratio);
+    for(int row = y; row < y + w; ++row){
+      for(int col = x; col < x + h; ++col){
+        dst->pixels[col + row * w] = src->pixels[w_ratio * col + h_ratio * row * w ];
+        // printf("from [%d, %d] to [%d, %d]\n", row, col, h_ratio * row, w_ratio * col);
+      }
+    }
   }
 }
 
