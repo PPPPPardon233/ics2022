@@ -94,7 +94,7 @@ static int inline read_keyinfo(uint8_t *type, uint8_t *sym){
       *sym = i;
     }
   }
-  return ret;
+  return 0;
 }
 
 int SDL_PollEvent(SDL_Event *ev) {
