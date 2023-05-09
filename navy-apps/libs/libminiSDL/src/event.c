@@ -56,7 +56,7 @@ int SDL_PushEvent(SDL_Event *ev) {
 
 static char key_buf[64], *key_action, *key_key;
 
-#define _DEBUG_
+//#define _DEBUG_
 
 static int inline read_keyinfo(uint8_t *type, uint8_t *sym){
   int ret = NDL_PollEvent(key_buf, sizeof(key_buf));
@@ -75,11 +75,9 @@ static int inline read_keyinfo(uint8_t *type, uint8_t *sym){
 
   //deal with key_key
   key_key = &key_buf[i + 1]; 
-
   #ifdef _DEBUG_
   printf("%s",key_key);
   #endif
-
   for (i = 0;  key_key[i] != '\0' && key_key[i] != '\n'; i++){}
   if (key_key[i] == '\n'){
     key_key[i] = '\0';
@@ -88,7 +86,6 @@ static int inline read_keyinfo(uint8_t *type, uint8_t *sym){
   //deal with paramaters
   if (key_action[1] == 'd')   *type = SDL_KEYDOWN;
   else                        *type = SDL_KEYUP;
-
   for (i = 0; i < sizeof(keyname) / sizeof(char *); ++i){
     if (key_key[0] == keyname[i][0] && strcmp(key_key, keyname[i]) == 0){
       *sym = i;
@@ -134,7 +131,6 @@ int SDL_WaitEvent(SDL_Event *event) {
 
   switch(type){
     case SDL_KEYDOWN:
-      printf("fuck!!!");
       key_state[sym] = 1;
       break;
     
