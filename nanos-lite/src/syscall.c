@@ -30,13 +30,17 @@ enum {
 };
 */
 
+extern void naive_uload(PCB *pcb, const char *filename);
+//extern int execve(const char *filename, char *const argv[], char *const envp[]);
+
 int sys_yield(){
 	yield();
 	return 0;
 }
 
-int sys_exit(){
-	halt(0);
+int sys_exit(Context *c){
+	// halt(0);
+  //c->GPRx = execve("/bin/menu", NULL, NULL);
 	return 0;
 }
 
@@ -79,6 +83,16 @@ int sys_brk(Context *c){
   return 0;
 }
 
+int sys_execve(Context *c){
+  const char *fname = (const char *)c->GPR2;
+  // char **argv = (char **)c->GPR3;
+  // char **envp = (char **)c->GPR4;
+  // c->GPRx = execve(fname, argv, envp);
+  naive_uload(NULL, fname);
+  c->GPRx = 0;
+  return 0;
+}
+
 void do_syscall(Context *c) {
   //Log("strace", c->mcause, c->GPR1, c->GPR2, c->GPR3, c->GPR4);
 
@@ -94,7 +108,7 @@ void do_syscall(Context *c) {
 
   switch(a[0]){
     case SYS_exit:
-      c->GPRx = sys_exit();
+      c->GPRx = sys_exit(c);
       break;
     case SYS_yield:
       c->GPRx = sys_yield();
