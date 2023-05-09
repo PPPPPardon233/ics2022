@@ -156,7 +156,7 @@ static int cmd_load(char *args){
   FILE* fp = fopen(filename, "r");
   int ret = load_regs(fp);
   ret = load_mem(fp);
-  
+  printf("snapshot loaded!\n");
   return ret;
 }
 
