@@ -72,8 +72,8 @@ int main() {
         case SDLK_DOWN: next(rep); rep = 0; g = 0; break;
         case SDLK_K:
         case SDLK_UP: prev(rep); rep = 0; g = 0; break;
-        case SDLK_G:next(rep); rep = 0; g = 0; break;
-        default: 
+        case SDLK_G:
+        default: next(rep); rep = 0; g = 0; break;
           g ++;
           if (g > 1) {
             prev(100000);
