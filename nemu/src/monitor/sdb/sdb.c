@@ -137,11 +137,11 @@ static int cmd_save(char *args){
   strcpy(filename, home_path);
   strcat(filename, "/src/monitor/nemu_history/");
   strcat(filename, args);
-  printf("%s\n",filename);
+  //printf("%s\n",filename);
   FILE* fp = fopen(filename, "w");
   int ret = save_regs(fp);
   ret = save_mem(fp);
-  
+  printf("snapshot saved!\n");
   return ret;
 }
 
