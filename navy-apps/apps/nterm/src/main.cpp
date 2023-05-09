@@ -48,7 +48,7 @@ void refresh_terminal() {
   static uint32_t last = 0;
   static int flip = 0;
   uint32_t now = SDL_GetTicks();
-  if (now - last > 500 || needsync) {
+  if (now - last > 50 || needsync) {
     int x = term->cursor.x, y = term->cursor.y;
     uint32_t color = (flip ? term->foreground(x, y) : term->background(x, y));
     draw_ch(x * font->w, y * font->h, ' ', 0, color);
