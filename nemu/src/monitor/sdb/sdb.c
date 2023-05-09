@@ -130,8 +130,6 @@ extern int save_regs(FILE* fp);
 #define FILENAME_LEN 128
 static int cmd_save(char *args){
   if(args == NULL) return 0;
-  //char *history_name = strtok(NULL, " ");
-
   char *home_path = getenv("NEMU_HOME");
   char filename[FILENAME_LEN];
   strcpy(filename, home_path);
@@ -140,7 +138,7 @@ static int cmd_save(char *args){
   //printf("%s\n",filename);
   FILE* fp = fopen(filename, "w");
   int ret = save_regs(fp);
-  //ret = save_mem(fp);
+  ret = save_mem(fp);
   printf("snapshot saved!\n");
   return ret;
 }
@@ -149,13 +147,11 @@ extern int load_mem(FILE *fp);
 extern int load_regs(FILE* fp);
 static int cmd_load(char *args){
   if(args == NULL) return 0;
-  char *history_name = strtok(NULL, " ");
-
   char *home_path = getenv("NEMU_HOME");
   char filename[FILENAME_LEN];
   strcpy(filename, home_path);
   strcat(filename, "/src/monitor/nemu_history/");
-  strcat(filename, history_name);
+  strcat(filename, args);
 
   FILE* fp = fopen(filename, "r");
   int ret = load_regs(fp);
