@@ -130,13 +130,13 @@ extern int save_regs(FILE* fp);
 #define FILENAME_LEN 128
 static int cmd_save(char *args){
   if(args == NULL) return 0;
-  char *history_name = strtok(NULL, " ");
+  //char *history_name = strtok(NULL, " ");
 
   char *home_path = getenv("NEMU_HOME");
   char filename[FILENAME_LEN];
   strcpy(filename, home_path);
   strcat(filename, "/src/monitor/nemu_history/");
-  strcat(filename, history_name);
+  strcat(filename, args);
 
   FILE* fp = fopen(filename, "w");
   int ret = save_regs(fp);
