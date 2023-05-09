@@ -1,9 +1,3 @@
-#NAME = pal
-#SRCS = $(shell find src/ -name "*.c")
-#LIBS += libndl
-
-#include $(NAVY_HOME)/Makefile.app
-
 REPO_PATH = repo
 ifeq ($(wildcard repo/include/palcommon.h),)
   $(shell mkdir -p $(NAVY_HOME)/fsimg/share/games)
