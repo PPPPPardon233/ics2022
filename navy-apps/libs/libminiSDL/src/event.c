@@ -134,6 +134,7 @@ int SDL_WaitEvent(SDL_Event *event) {
 
   switch(type){
     case SDL_KEYDOWN:
+      printf("fuck!!!");
       key_state[sym] = 1;
       break;
     
