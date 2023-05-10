@@ -33,7 +33,7 @@ static void sh_handle_cmd(const char *cmd) {
   int argc = 0;
 
   token = strtok(command, split);
-  printf("ready to load %s",token);
+  sh_printf("ready to load %s",token);
   while( token != NULL ) {
     argv[argc++] = token;
     token = strtok(NULL, split);
@@ -54,7 +54,6 @@ void builtin_sh_run() {
       if (ev.type == SDL_KEYUP || ev.type == SDL_KEYDOWN) {
         const char *res = term->keypress(handle_key(&ev));
         if (res) {
-          assert(0);
           sh_handle_cmd(res);
           sh_prompt();
         }
