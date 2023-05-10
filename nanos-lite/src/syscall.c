@@ -134,9 +134,9 @@ void do_syscall(Context *c) {
     case SYS_gettimeofday:
       c->GPRx = sys_gettimeofday(c);
       break;
-    // case SYS_execve:
-    //   c->GPRx = sys_execve(c);
-    //   break;
+    case SYS_execve:
+      c->GPRx = sys_execve(c);
+      break;
     default:
       panic("Unhandled syscall ID = %d", a[0]);
   }
