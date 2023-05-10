@@ -39,7 +39,7 @@ static void sh_handle_cmd(const char *cmd) {
     token = strtok(NULL, split);
   }
   argv[argc] = NULL;
-
+  printf("ready to load %s",token);
   execvp(argv[0], argv);
 }
 
