@@ -41,7 +41,7 @@ int sys_yield(){
 int sys_execve(Context *c){
   const char *fname = (const char *)c->GPR2;
   //naive_uload(NULL, "/bin/menu");
-  Log("# Ready to load %s",fname);
+  Log("Ready to load %s",fname);
   naive_uload(NULL, fname);
   return 0;
 }

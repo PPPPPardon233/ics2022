@@ -33,7 +33,6 @@ static void sh_handle_cmd(const char *cmd) {
   int argc = 0;
 
   token = strtok(command, split);
-  sh_printf("ready to load %s",token);
   while( token != NULL ) {
     argv[argc++] = token;
     token = strtok(NULL, split);
