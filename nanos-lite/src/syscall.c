@@ -47,7 +47,7 @@ int sys_execve(Context *c){
 
 int sys_exit(Context *c){
 	// halt(0);
-  naive_uload(NULL, "/bin/nterm");
+  naive_uload(NULL, "/bin/menu");
 	return 0;
 }
 
