@@ -38,9 +38,15 @@ int sys_yield(){
 	return 0;
 }
 
+int sys_execve(Context *c){
+  const char *fname = (const char *)c->GPR2;
+  naive_uload(NULL, fname);
+  return 0;
+}
+
 int sys_exit(Context *c){
 	// halt(0);
-  //c->GPRx = execve("/bin/menu", NULL, NULL);
+  naive_uload(NULL, "/bin/menu");
 	return 0;
 }
 
@@ -80,16 +86,6 @@ int sys_lseek(Context *c){
 }
 
 int sys_brk(Context *c){
-  return 0;
-}
-
-int sys_execve(Context *c){
-  const char *fname = (const char *)c->GPR2;
-  // char **argv = (char **)c->GPR3;
-  // char **envp = (char **)c->GPR4;
-  // c->GPRx = execve(fname, argv, envp);
-  naive_uload(NULL, fname);
-  c->GPRx = 0;
   return 0;
 }
 
