@@ -33,13 +33,13 @@ static void sh_handle_cmd(const char *cmd) {
   int argc = 0;
 
   token = strtok(command, split);
-  
+  printf("ready to load %s",token);
   while( token != NULL ) {
     argv[argc++] = token;
     token = strtok(NULL, split);
   }
   argv[argc] = NULL;
-  printf("ready to load %s",token);
+  
   execvp(argv[0], argv);
 }
 
@@ -53,7 +53,6 @@ void builtin_sh_run() {
     if (SDL_PollEvent(&ev)) {
       if (ev.type == SDL_KEYUP || ev.type == SDL_KEYDOWN) {
         const char *res = term->keypress(handle_key(&ev));
-        printf("handle");
         if (res) {
           printf("handle");
           sh_handle_cmd(res);
