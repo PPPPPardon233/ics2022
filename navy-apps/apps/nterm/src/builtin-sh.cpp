@@ -54,6 +54,7 @@ void builtin_sh_run() {
       if (ev.type == SDL_KEYUP || ev.type == SDL_KEYDOWN) {
         const char *res = term->keypress(handle_key(&ev));
         if (res) {
+          printf("handle");
           sh_handle_cmd(res);
           sh_prompt();
         }
